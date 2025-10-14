@@ -4,14 +4,16 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'index.html'
+      - 'index.php'
       - 'Dockerfile'
+      - 'default.conf'
 
   pull_request:
     branches: [ "main" ]
     paths:
       - 'index.html'
       - 'Dockerfile'
+      - 'default.conf'
 
 jobs:
   build-and-push:
