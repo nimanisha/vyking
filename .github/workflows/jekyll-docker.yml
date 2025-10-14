@@ -26,6 +26,6 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
-        context: ./nimanisha/vyking
+        context: .
         push: true
         tags: nimaakhavi/vyking-html:latest
