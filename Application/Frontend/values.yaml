@@ -5,4 +5,4 @@ image:
 service: 
   type: NodePort
   port: 8080
-  nodePort: 32080
+  # nodePort: 32080
