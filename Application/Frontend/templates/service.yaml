@@ -9,4 +9,4 @@ spec:
   ports:   
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.port }}
-      nodePort: {{ .Values.service.nodePort | default null }}
+      # nodePort: {{ .Values.service.nodePort }}
