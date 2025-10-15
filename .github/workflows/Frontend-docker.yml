@@ -4,16 +4,16 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'Application/Backend/index.html'
-      - 'Application/Backend/Dockerfile'
-      - 'Application/Backend/default.conf'
+      - 'Application/Frontend/index.html'
+      - 'Application/Frontend/Dockerfile'
+      - 'Application/Frontend/default.conf'
 
   pull_request:
     branches: [ "main" ]
     paths:
-      - 'Application/Backend/index.html'
-      - 'Application/Backend/Dockerfile'
-      - 'Application/Backend/default.conf'
+      - 'Application/Frontend/index.html'
+      - 'Application/Frontend/Dockerfile'
+      - 'Application/Frontend/default.conf'
 
 jobs:
   build-and-push:
@@ -35,6 +35,6 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: Application/Backend
+          context: Application/Frontend
           push: true
           tags: nimaakhavi/vyking-html:latest
