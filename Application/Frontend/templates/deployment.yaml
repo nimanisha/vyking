@@ -11,7 +11,7 @@ spec:
     metadata:
       labels:
         app: {{ include "frontend.name" . }}
-    spec:
+    spec:  
       containers:
         - name: frontend
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
