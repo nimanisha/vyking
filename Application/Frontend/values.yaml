@@ -1,0 +1,8 @@
+replicaCount: 1
+image:
+  repository: nimaakhavi/frontend
+  tag: latest
+service: 
+  type: NodePort
+  port: 80
+  nodePort: 32080
