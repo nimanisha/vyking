@@ -1,4 +1,4 @@
-name: Vyking CI
+name: Vyking backend CI
 
 on:
   push:
