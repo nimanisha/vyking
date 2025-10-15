@@ -1,0 +1,15 @@
+image:
+  repository: mysql
+  tag: "8.0"
+
+mysql:
+  rootPassword: password
+  database: demo_db
+  user: root
+  port: 3306
+
+persistence:
+  enabled: true
+  size: 1Gi
+  storageClass: ""  # leave empty for default or static PV
+  accessModes: ["ReadWriteOnce"]
