@@ -1,0 +1,123 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mysql-backup
+  namespace: default
+  labels:
+    app: mysql-backup
+    component: backup
+spec:
+  # Every 5 minutes for demonstration
+  schedule: "*/5 * * * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 2
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      backoffLimit: 3
+      activeDeadlineSeconds: 600
+      template:
+        metadata:
+          labels:
+            app: mysql-backup
+            component: backup-job
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: mysql-backup
+            image: mysql:8.0
+            command:
+            - /bin/bash
+            - -c
+            - |
+              set -euo pipefail
+              
+              echo "=== MySQL Backup Job Started at $(date) ==="
+              
+              # Wait for MySQL to be ready
+              echo "Waiting for MySQL to be ready..."
+              timeout=300
+              counter=0
+              until mysqladmin ping -h mysql -u root -p${MYSQL_ROOT_PASSWORD} --silent; do
+                if [ $counter -eq $timeout ]; then
+                  echo "ERROR: MySQL connection timeout after ${timeout} seconds"
+                  exit 1
+                fi
+                echo "MySQL is unavailable - sleeping (${counter}/${timeout})"
+                sleep 5
+                counter=$((counter + 5))
+              done
+              
+              echo "MySQL is ready - executing backup"
+              
+              # Create backup with timestamp
+              TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+              BACKUP_FILE="/backup/mysql_backup_${TIMESTAMP}.sql"
+              
+              echo "Starting mysqldump backup to: ${BACKUP_FILE}"
+              
+              # Execute mysqldump with proper options
+              mysqldump \
+                --host=mysql \
+                --user=root \
+                --password=${MYSQL_ROOT_PASSWORD} \
+                --single-transaction \
+                --routines \
+                --triggers \
+                --all-databases \
+                --quick \
+                --lock-tables=false \
+                --add-drop-database \
+                --disable-keys \
+                --extended-insert \
+                --complete-insert \
+                --comments \
+                --dump-date > ${BACKUP_FILE}
+              
+              backup_exit_code=$?
+              
+              if [ $backup_exit_code -eq 0 ]; then
+                echo "✅ Backup completed successfully!"
+                echo "📁 Backup file: ${BACKUP_FILE}"
+                echo "📊 Backup file size: $(du -h ${BACKUP_FILE} | cut -f1)"
+                
+                # List all backups
+                echo "📋 Available backups:"
+                ls -la /backup/mysql_backup_*.sql 2>/dev/null || echo "No previous backups found"
+                
+                # Cleanup old backups (keep last 10)
+                echo "🧹 Cleaning up old backups (keeping last 10)..."
+                cd /backup
+                ls -t mysql_backup_*.sql 2>/dev/null | tail -n +11 | xargs -r rm -f
+                
+                echo "✅ Cleanup completed. Final backup list:"
+                ls -la /backup/mysql_backup_*.sql 2>/dev/null || echo "No backups found"
+                
+                echo "=== MySQL Backup Job Completed Successfully at $(date) ==="
+              else
+                echo "❌ Backup failed with exit code: $backup_exit_code"
+                echo "=== MySQL Backup Job Failed at $(date) ==="
+                exit 1
+              fi
+            env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: mysql-root-password
+            - name: TZ
+              value: "UTC"
+            volumeMounts:
+            - name: backup-storage
+              mountPath: /backup
+            resources:
+              requests:
+                memory: "128Mi"
+                cpu: "100m"
+              limits:
+                memory: "256Mi"
+                cpu: "200m"
+          volumes:
+          - name: backup-storage
+            persistentVolumeClaim:
+              claimName: mysql-backup-pvc
