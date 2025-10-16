@@ -1,4 +1,3 @@
-```hcl
 variable "cluster_name" {
   description = "Name of the K3D cluster"
   type        = string
@@ -35,4 +34,3 @@ variable "argocd_version" {
   type        = string
   default     = "5.51.6"
 }
-```

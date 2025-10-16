@@ -1,4 +1,3 @@
-```hcl
 # MySQL Application (using Bitnami Helm Chart)
 resource "kubernetes_manifest" "mysql_app" {
   depends_on = [time_sleep.wait_for_argocd]
@@ -209,7 +208,6 @@ output "argocd_applications" {
     }
   }
 }
-```
 
 ## Step 6: Complete Deployment Process
 
