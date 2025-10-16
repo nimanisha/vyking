@@ -18,14 +18,14 @@ terraform {
 
 # Configure Kubernetes provider for K3D cluster
 provider "kubernetes" {
-  config_path    = "C:\Users\Nima\kubeconfig.yaml"
+  config_path    = "C:\Users\Nima\"
   config_context = "k3d-${var.cluster_name}"
 }
 
 # Configure Helm provider for K3D cluster
 provider "helm" {
   kubernetes {
-    config_path    = "C:\Users\Nima\kubeconfig.yaml"
+    config_path    = "C:\Users\Nima\"
     config_context = "k3d-${var.cluster_name}"
   }
 }
