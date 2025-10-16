@@ -2,13 +2,13 @@
 variable "cluster_name" {
   description = "Name of the K3D cluster"
   type        = string
-  default     = "gitops-cluster"
+  default     = "vyking"
 }
 
 variable "git_repo_url" {
   description = "Git repository URL (HTTPS format for ArgoCD)"
   type        = string
-  default     = "https://github.com/nimanisha/vyking/gitops-k3d-practice.git"
+  default     = "https://github.com/nimanisha/vyking.git"
   #   IMPORTANT: Update this with your actual repository URL
 }
 
