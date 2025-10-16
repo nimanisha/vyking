@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "webapp-helm-chart.fullname" . }}-backend
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "webapp-helm-chart.backend.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "webapp-helm-chart.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: backend
+  template:
+    metadata:
+      labels:
+        {{- include "webapp-helm-chart.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: backend
+    spec:
+      containers:
+      - name: backend
+        image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+        imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.backend.service.targetPort }}
+          protocol: TCP
+        env:
+        - name: SERVER_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "webapp-helm-chart.fullname" . }}-backend-config
+              key: serverName
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "webapp-helm-chart.fullname" . }}-backend-config
+              key: databaseHost
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "webapp-helm-chart.fullname" . }}-backend-config
+              key: databasePort
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "webapp-helm-chart.fullname" . }}-backend-config
+              key: databaseName
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "webapp-helm-chart.fullname" . }}-backend-config
+              key: databaseUser
+        - name: ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "webapp-helm-chart.fullname" . }}-backend-config
+              key: environment
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "webapp-helm-chart.fullname" . }}-backend-config
+              key: logLevel
+        resources:
+          {{- toYaml .Values.backend.resources | nindent 10 }}
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
