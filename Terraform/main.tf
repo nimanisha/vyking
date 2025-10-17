@@ -16,9 +16,8 @@ terraform {
   }
 }
 
-# Configure Kubernetes provider for K3D cluster
 provider "kubernetes" {
-  # config_path is not needed if not using a specific Kube config file
+  config_path    = "C:/Users/Nima/kubeconfig.yaml"  
   config_context = "k3d-${var.cluster_name}"
 }
 
