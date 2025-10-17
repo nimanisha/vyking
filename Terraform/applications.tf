@@ -1,6 +1,6 @@
-# MySQL Application (using Bitnami Helm Chart)
 resource "kubernetes_manifest" "mysql_app" {
-  depends_on = [time_sleep.wait_for_argocd]
+  # depends_on = [time_sleep.wait_for_argocd]
+  depends_on = [kubernetes_manifest.argocd_crds]
   
   manifest = {
     apiVersion = "argoproj.io/v1alpha1"
