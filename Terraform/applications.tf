@@ -23,7 +23,7 @@ resource "kubernetes_manifest" "mysql_app" {
         chart          = "mysql"
         helm = {
           releaseName = "mysql"
-          values = file("${path.module}/../infrastructure/mysql-values.yaml") # Ensure this file exists
+          values = file("../infrastructure/mysql/values.yaml") 
         }
       }
       
