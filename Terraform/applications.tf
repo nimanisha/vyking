@@ -23,7 +23,7 @@ resource "kubernetes_manifest" "mysql_app" {
         chart          = "mysql"
         helm = {
           releaseName = "mysql"
-          values = file("${path.module}/../infrastructure/mysql-values.yaml")
+          values = file("${path.module}/../infrastructure/mysql-values.yaml") # Ensure this file exists
         }
       }
       
@@ -208,7 +208,3 @@ output "argocd_applications" {
     }
   }
 }
-
-## Step 6: Complete Deployment Process
-
-### 1. Setup Git Repository with SSH:
