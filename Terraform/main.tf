@@ -16,6 +16,12 @@ terraform {
   }
 }
 
+resource "kubernetes_manifest" "argocd_crds" {
+  manifest = yamldecode(http(
+    url = "https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/crds.yaml"
+  ))
+}
+
 provider "kubernetes" {
   config_path    = "C:/Users/Nima/kubeconfig.yaml"  
   config_context = "k3d-${var.cluster_name}"
@@ -46,8 +52,11 @@ resource "kubernetes_namespace" "default" {
     name = var.application_namespace
   }
   
+  
   # Prevent destruction of default namespace
   lifecycle {
     prevent_destroy = true
   }
 }
+
+
