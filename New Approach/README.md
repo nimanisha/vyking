@@ -25,9 +25,14 @@
 5. Initialize Terraform and apply (set TF_VAR_repo_url to the URL where the repo will be hosted; if you test locally you can set it to your local filesystem git server or a public repo):
    ```bash
    cd terraform
-   export TF_VAR_repo_url="https://github.com/<you>/<repo>"   # set to your repo url
+   export TF_VAR_repo_url="https://github.com/nimanisha/vyking.git"   
    terraform init
-   terraform apply -auto-approve
+
+   terraform apply -target=helm_release.argocd
+
+kubectl get crd | findstr argoproj
+
+   terraform apply
    ```
 
 6. Verify Argo CD:
