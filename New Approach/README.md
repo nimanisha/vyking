@@ -28,6 +28,8 @@
    export TF_VAR_repo_url="https://github.com/nimanisha/vyking.git"   
    terraform init
 
+   terraform apply -target=null_resource.helm_repo_add -target=time_sleep.wait_for_repo
+
    terraform apply -target=helm_release.argocd
 
 kubectl get crd | findstr argoproj
