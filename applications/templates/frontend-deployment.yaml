@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "demo.fullname" . }}-frontend
+spec:
+  replicas: {{ .Values.replicaCount.frontend }}
+  selector:
+    matchLabels:
+      app: {{ include "demo.fullname" . }}-frontend
+  template:
+    metadata:
+      labels:
+        app: {{ include "demo.fullname" . }}-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: {{ .Values.images.frontend }}
+        ports:
+        - containerPort: 80
+        env:
+        - name: BACKEND_URL
+          value: "http://{{ include "demo.fullname" . }}-backend:{{ .Values.service.backend.port }}"
