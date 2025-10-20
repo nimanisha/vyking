@@ -12,11 +12,11 @@ import (
 var db *sql.DB
 
 func main() {
-  mysqlUser := getenv("MYSQL_USER", "root")
-  mysqlPass := getenv("MYSQL_PASSWORD", "mypassword")
-  mysqlHost := getenv("MYSQL_HOST", "mysql")
+  mysqlUser := getenv("MYSQL_USER", "$root")
+  mysqlPass := getenv("MYSQL_PASSWORD", "$mypassword")
+  mysqlHost := getenv("MYSQL_HOST", "$mysql")
   mysqlPort := getenv("MYSQL_PORT", "3306")
-  mysqlDB := getenv("MYSQL_DATABASE", "appdb")
+  mysqlDB := getenv("MYSQL_DATABASE", "$appdb")
 
   dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", mysqlUser, mysqlPass, mysqlHost, mysqlPort, mysqlDB)
   var err error

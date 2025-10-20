@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-CLUSTER_NAME=gitops-demo
+CLUSTER_NAME=vyking
 REG_NAME=registry.localhost
 REG_PORT=5000
 
