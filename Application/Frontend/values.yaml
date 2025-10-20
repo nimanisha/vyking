@@ -1,8 +1,0 @@
-replicaCount: 1
-image:
-  repository: nimaakhavi/vyking-html
-  tag: latest
-service: 
-  type: NodePort
-  port: 80
-  # nodePort: 32080
