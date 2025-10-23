@@ -1,17 +1,18 @@
+{{- if .Values.backup.enabled }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: mysql-backup
-  namespace: infra
+  namespace: {{ .Values.global.namespace }}
 spec:
-  schedule: "*/5 * * * *"
+  schedule: {{ .Values.backup.schedule | quote }}
   jobTemplate:
     spec:
       template:
         spec:
           containers:
           - name: backup
-            image: bitnami/mysql:8.0
+            image: {{ .Values.backup.image.repository }}:{{ .Values.backup.image.tag }}
             command:
             - /bin/sh
             - -c
@@ -21,7 +22,7 @@ spec:
               mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > /backups/db-$TIMESTAMP.sql
             env:
             - name: MYSQL_HOST
-              value: mysql
+              value: {{ .Values.backup.mysql.host }}
             - name: MYSQL_USER
               valueFrom:
                 secretKeyRef:
@@ -33,7 +34,7 @@ spec:
                   name: mysql-credentials
                   key: password
             - name: MYSQL_DATABASE
-              value: appdb
+              value: {{ .Values.backup.mysql.database }}
             volumeMounts:
             - name: backup-volume
               mountPath: /backups
@@ -42,3 +43,4 @@ spec:
           - name: backup-volume
             persistentVolumeClaim:
               claimName: mysql-backup-pvc
+{{- end }}

@@ -8,7 +8,10 @@ spec:
   source:
     repoURL: "${repo_url}"
     targetRevision: "${repo_branch}"
-    path: applications
+    path: New Approach/applications
+    helm:
+      valueFiles:
+        - values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: default
