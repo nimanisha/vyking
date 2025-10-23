@@ -1,26 +1,26 @@
-resource "helm_release" "argocd" {
-  name             = "argocd"
-  repository       = "argo"
-  chart            = "argo-cd"
-  namespace        = "argocd"
-  create_namespace = true
+# resource "helm_release" "argocd" {
+#   name             = "argocd"
+#   repository       = "argo"
+#   chart            = "argo-cd"
+#   namespace        = "argocd"
+#   create_namespace = true
 
-  values = [<<EOF
-server:
-  service:
-    type: ClusterIP
-  extraArgs:
-    - --insecure
-EOF
-  ]
+#   values = [<<EOF
+# server:
+#   service:
+#     type: ClusterIP
+#   extraArgs:
+#     - --insecure
+# EOF
+#   ]
 
-  depends_on = [time_sleep.wait_for_repo]
-}
+#   depends_on = [time_sleep.wait_for_repo]
+# }
 
 # Wait for ArgoCD CRDs to be ready
 resource "time_sleep" "wait_for_argocd_crds" {
-  depends_on = [helm_release.argocd]
-  create_duration = "900s"
+  # depends_on = [helm_release.argocd]
+  create_duration = "5s"
 }
 
 # Verify CRDs are installed
