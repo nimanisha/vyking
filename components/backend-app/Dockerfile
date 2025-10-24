@@ -1,5 +1,5 @@
 FROM golang:1.20-alpine
-#Backend
+
 RUN apk add --no-cache ca-certificates git
 
 WORKDIR /app
