@@ -35,6 +35,6 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: Application/Backend
+          context: components/backend-app
           push: true
-          tags: nimaakhavi/backend:latest
+          tags: nimaakhavi/localhost:5000/backend:latest
