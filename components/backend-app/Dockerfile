@@ -1,11 +1,10 @@
-# my dockerfile
-FROM golang:1.20-alpine AS builder
-WORKDIR /src
+FROM golang:1.20-alpine
+RUN apk add --no-cache ca-certificates git
+WORKDIR /app
 COPY . .
-RUN go build -o /bin/backend main.go
+RUN go mod init backend-app && \
+    go mod tidy && \
+    go build -o backend main.go
 
-FROM alpine:3.18
-RUN apk add --no-cache ca-certificates
-COPY --from=builder /bin/backend /usr/local/bin/backend
 EXPOSE 8080
-ENTRYPOINT ["/usr/local/bin/backend"]
+CMD ["./backend"]
