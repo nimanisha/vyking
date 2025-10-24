@@ -1,20 +1,11 @@
-FROM golang:1.20-alpine
-
-RUN apk add --no-cache ca-certificates git
+FROM golang:1.20
 
 WORKDIR /app
+COPY main.go .
 
-COPY go.mod go.sum ./
-RUN go mod tidy
-
-COPY . .
-RUN go build -o backend main.go
-
-FROM alpine:latest
-RUN apk add --no-cache ca-certificates
-WORKDIR /root/
-COPY --from=builder /app/backend .
+RUN echo 'module backend-app\n\ngo 1.20\n\nrequire github.com/go-sql-driver/mysql v1.7.1' > go.mod && \
+    go mod download && \
+    go build -o backend main.go
 
 EXPOSE 8080
-
 CMD ["./backend"]

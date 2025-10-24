@@ -37,6 +37,9 @@
    kubectl -n argocd port-forward svc/argocd-argocd-server 8080:80
    # initial password:
    kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+
+   windows :
+   & "C:\ProgramData\chocolatey\bin\kubectl.exe" -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | ForEach-Object { [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($_)) }
    # open http://localhost:8080
    ```
 
