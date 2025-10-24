@@ -1,5 +1,2 @@
-github.com/gin-gonic/gin v1.9.1 h1:QnDh8iv5kLzBlaD6NHyF8OEAFnPz4eZbYw9h7U13KJY=
-github.com/gin-gonic/gin v1.9.1/go.mod h1:dLlbW1vfH6jM5PsoE2uw5VDxOJg9SrFTbM6DKzKZbM4=
-github.com/go-playground/validator/v10 v10.15.0 h1:JUvujd6v5SgXR2j9lI1zpQ06mB0hxhStzEPbyL6t07E=
-github.com/go-playground/validator/v10 v10.15.0/go.mod h1:PrYkMc2D9DUI/9bOJe00kCYY3wcpljMYzds0TjqC1t4=
-...
+github.com/go-sql-driver/mysql v1.7.1 h1:lUIinVbN1DY0xBg0eMOzmmtGoHwWBbvnWubQUrtU8EI=
+github.com/go-sql-driver/mysql v1.7.1/go.mod h1:OXbVy3sEdcQ2Doequ6Z5BW6fXNQTmx+9S1MCJN5yJMI=
