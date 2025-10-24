@@ -4,15 +4,15 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      # - 'Application/Backend/index.php'
-      # - 'Application/Backend/Dockerfile'
+      - 'components/backend-app/main.go'
+      - 'components/backend-app/Dockerfile'
       # - 'Application/Backend/default.conf'
 
   pull_request:
     branches: [ "main" ]
     paths:
-      # - 'Application/Backend/index.php'
-      # - 'Application/Backend/Dockerfile'
+      - 'components/backend-app/main.go'
+      - 'components/backend-app/Dockerfile'
       # - 'Applica tion/Backend/default.conf'
 
 jobs:
@@ -37,4 +37,4 @@ jobs:
         with:
           context: Application/Backend
           push: true
-          tags: nimaakhavi/vyking-backend:latest
+          tags: nimaakhavi/localhost:5000/backend:latest

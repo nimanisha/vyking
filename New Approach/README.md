@@ -32,6 +32,9 @@
 
    terraform apply -target=helm_release.argocd
 
+   kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | powershell -command "[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($input))"
+   lImcxr-Hp8v39nTx
+
 kubectl get crd | findstr argoproj
 
    terraform apply
