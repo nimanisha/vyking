@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Rating System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container mt-5">
+    <h2>Register rate of Users</h2>
+    <form id="rateForm" class="mb-4">
+        <input type="text" id="name" placeholder="Name" class="form-control mb-2" required>
+        <input type="text" id="surname" placeholder="Surname" class="form-control mb-2" required>
+        <input type="number" id="rate" placeholder="Rate (1-10)" class="form-control mb-2" required>
+        <button type="submit" class="btn btn-primary">Register Rate</button>
+    </form>
+
+    <hr>
+    <h3>List of Rates</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Rate</th>
+            </tr>
+        </thead>
+        <tbody id="userTableBody">
+            </tbody>
+    </table>
+
+    <script>
+        const API_URL = 'http://<BACKEND_SERVICE_IP>:8080/api/users'; // آدرس سرویس بک‌اِند در کوبرنتیز
+
+        async function fetchUsers() {
+            const response = await fetch(API_URL);
+            const users = await response.json();
+            const tableBody = document.getElementById('userTableBody');
+            tableBody.innerHTML = '';
+            users.forEach(user => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${user.name}</td>
+                        <td>${user.surname}</td>
+                        <td>${user.rate}</td>
+                    </tr>`;
+            });
+        }
+
+      
+        document.getElementById('rateForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userData = {
+                name: document.getElementById('name').value,
+                surname: document.getElementById('surname').value,
+                rate: document.getElementById('rate').value
+            };
+
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userData)
+            });
+
+            fetchUsers(); 
+            e.target.reset();
+        });
+
+        fetchUsers(); 
+    </script>
+</body>
+</html>

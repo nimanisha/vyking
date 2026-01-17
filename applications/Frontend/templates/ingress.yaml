@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "frontend.fullname" . }}
+  annotations:
+    # Traefik به صورت پیش‌فرض در k3d نصب است
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - host: frontend.k3d.localhost  # می‌توانید این را در فایل hosts سیستم خود ست کنید
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "frontend.fullname" . }}
+                port:
+                  number: 80
