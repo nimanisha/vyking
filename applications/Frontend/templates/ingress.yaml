@@ -2,15 +2,17 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ include "frontend.fullname" . }}
+  labels:
+    {{- include "frontend.labels" . | nindent 4 }}
   annotations:
-    # Traefik به صورت پیش‌فرض در k3d نصب است
-    kubernetes.io/ingress.class: traefik
+    # مشخص کردن اینگرس کنترلر k3d
+    kubernetes.io/ingress.class: {{ .Values.ingress.className | default "traefik" }}
 spec:
   rules:
-    - host: frontend.k3d.localhost  # می‌توانید این را در فایل hosts سیستم خود ست کنید
+    - host: {{ .Values.ingress.host | quote }}
       http:
         paths:
-          - path: /
+          - path: {{ .Values.ingress.path }}
             pathType: Prefix
             backend:
               service:
