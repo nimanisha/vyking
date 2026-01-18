@@ -32,10 +32,10 @@ jobs:
 
       - name: Package and Push OCI
         run: |
-                  CHART_VERSION=$(grep 'version:' application/Frontend/frontend-chart/Chart.yaml | awk '{print $2}')
+                  CHART_VERSION=$(grep 'version:' applications/Frontend/frontend-chart/Chart.yaml | awk '{print $2}')
                   NEW_VERSION="${CHART_VERSION}.${{ github.run_number }}"
-                  
-                  helm package application/Frontend/frontend-chart --version $NEW_VERSION
+
+                  helm package applications/Frontend/frontend-chart --version $NEW_VERSION
                   helm push frontend-chart-$NEW_VERSION.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
 
       - name: Run chart-releaser
