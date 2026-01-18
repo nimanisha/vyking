@@ -5,6 +5,7 @@ on:
     branches: [ "main" ] 
     paths:
       - 'applications/Frontend/**'
+      - '.github/workflows/Frontend-docker.yml'
 
 jobs:
   release:
