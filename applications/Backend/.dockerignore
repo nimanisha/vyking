@@ -1,0 +1,9 @@
+backend-chart/
+frontend-chart/
+target/
+*.log
+.git/
+.github/
+.idea/
+.vscode/
+*.tgz
