@@ -12,7 +12,7 @@ spec:
       labels:
         {{- include "frontend.selectorLabels" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ .Values.serviceAccount.name }}
+      serviceAccountName: {{ include "frontend.serviceAccountName" . }}
       containers:
         - name: frontend
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
