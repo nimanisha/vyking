@@ -3,45 +3,50 @@ name: Release Charts
 on:
   push:
     branches: [ "main" ] 
-    paths:
+    paths:  
       - 'applications/Frontend/**'
       - '.github/workflows/Frontend-docker.yml'
 
-jobs:
-  release:
+jjobs:
+  build-and-push:
     runs-on: ubuntu-latest
     permissions:
       contents: write
       packages: write
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Configure Git
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-
-      - name: Install Helm
-        uses: azure/setup-helm@v4
-
       - name: Login to GHCR
         run: |
+          echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           echo "${{ secrets.GH_PAT }}" | helm registry login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build and push Docker image
+        run: |
+          LOWER_REPO=$(echo "${{ github.repository_owner }}" | tr '[A-Z]' '[a-z]')
+          IMAGE_ID=ghcr.io/$LOWER_REPO/backend-app
+          
+          docker build applications/Backend/ -t $IMAGE_ID:latest -t $IMAGE_ID:${{ github.run_number }}
+          docker push $IMAGE_ID --all-tags
 
       - name: Package and Push OCI
         run: |
-          CHART_VERSION=$(grep '^version:' applications/Frontend/frontend-chart/Chart.yaml | awk '{print $2}' | tr -d '"' | tr -d "'")
+          CHART_VERSION=$(grep '^version:' applications/Backend/backend-chart/Chart.yaml | awk '{print $2}' | tr -d '"' | tr -d "'")
           NEW_VERSION="${CHART_VERSION}.${{ github.run_number }}"
 
-          echo "Building version: $NEW_VERSION"
-          helm package applications/Frontend/frontend-chart --version $NEW_VERSION
-          helm push frontend-chart-$NEW_VERSION.tgz oci://ghcr.io/${{ github.repository_owner }}/charts 
+          echo "Building Chart version: $NEW_VERSION"
+          helm package applications/Backend/backend-chart --version $NEW_VERSION
+          
+          LOWER_OWNER=$(echo "${{ github.repository_owner }}" | tr '[A-Z]' '[a-z]')
+          helm push backend-chart-$NEW_VERSION.tgz oci://ghcr.io/$LOWER_OWNER/charts
+
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0
         with:
-          charts_dir: frontend
+          charts_dir: applications/Backend
         env:
           CR_TOKEN: "${{ secrets.GH_PAT }}"
