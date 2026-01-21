@@ -36,5 +36,7 @@ jobs:
       - name: Package and Push Helm Chart (OCI)
         run: |
           echo "${{ secrets.GH_PAT }}" | helm registry login ghcr.io -u ${{ github.actor }} --password-stdin
-          helm package applications/Backend/backend-chart --version 1.0.${{ github.run_number }}
-          helm push backend-chart-*.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
+          CHART_VER="1.0.${{ github.run_number }}"
+          helm package applications/Backend/backend-chart --version $CHART_VER
+          LOWER_OWNER=$(echo "${{ github.repository_owner }}" | tr '[A-Z]' '[a-z]')
+          helm push backend-chart-*.tgz oci://ghcr.io/$LOWER_OWNER/charts
