@@ -28,9 +28,10 @@ jobs:
 
       - name: Package and Push OCI
         run: |
-          CHART_VERSION=$(grep '^version:' applications/Frontend/frontend-chart/Chart.yaml | awk '{print $2}' | tr -d '"' | tr -d "'")
-          NEW_VERSION="${CHART_VERSION}.${{ github.run_number }}"
-
+          BASE_VERSION=$(grep '^version:' applications/Frontend/frontend-chart/Chart.yaml | awk '{print $2}' | tr -d '"' | tr -d "'")       
+          NEW_VERSION="${BASE_VERSION}.${{ github.run_number }}"
           echo "Building version: $NEW_VERSION"
+
+          LOWER_OWNER=$(echo "${{ github.repository_owner }}" | tr '[A-Z]' '[a-z]')
           helm package applications/Frontend/frontend-chart --version $NEW_VERSION
-          helm push frontend-chart-$NEW_VERSION.tgz oci://ghcr.io/${{ github.repository_owner }}/charts 
+          helm push frontend-chart-$NEW_VERSION.tgz oci://ghcr.io/$LOWER_OWNER/charts
