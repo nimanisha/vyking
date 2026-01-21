@@ -7,7 +7,7 @@ on:
       - 'applications/Frontend/**'
       - '.github/workflows/Frontend-docker.yml'
 
-jjobs:
+jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
