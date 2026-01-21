@@ -1,5 +1,5 @@
 apiVersion: v2
-name: demo-applications
+name: backend-chart
 description: A chart that deploys frontend and backend together
 type: application
 version: 0.1
