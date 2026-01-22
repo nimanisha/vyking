@@ -4,7 +4,9 @@ image:
   repository: ghcr.io/nimanisha/backend-app 
   tag: latest 
   pullPolicy: Always
-
+  
+imagePullSecrets:
+  - name: ghcr-login
 service:
   type: ClusterIP
   port: 8080
