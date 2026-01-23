@@ -13,7 +13,7 @@ spec:
           - name: postgres-backup
             image: bitnami/postgresql:16 
             env:
-            - name: PGPASSWORD
+            - name: DBPASSWORD
               valueFrom:
                 secretKeyRef:
                   name: my-db-postgresql
@@ -29,7 +29,7 @@ spec:
               
               echo "Backup finished: $FILENAME"
               
-              echo "Cleaning up old backups..."
+              echo "Starting cleanup of old backups..."
               find /backup -name "db_backup_*.sql" -mtime +7 -exec rm {} \;
               echo "Cleanup done."
             volumeMounts:
