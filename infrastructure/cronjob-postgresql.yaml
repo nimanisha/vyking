@@ -25,7 +25,7 @@ spec:
               FILENAME="/backup/db_backup_$(date +%Y%m%d_%H%M).sql"
               
               echo "Starting backup..."
-              pg_dump -h my-db-postgresql -U postgres -d my_database > $FILENAME
+              pg_dump -h my-db-postgresql -U postgres -d postgres > $FILENAME
               
               echo "Backup finished: $FILENAME"
               
