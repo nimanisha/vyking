@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup
+  namespace: db
+spec:
+  schedule: "0 0 * * *" 
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: postgres-backup
+            image: bitnami/postgresql:16 
+            env:
+            - name: DBPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: my-db-postgresql
+                  key: postgres-password
+            command:
+            - /bin/sh
+            - -c
+            - |
+              FILENAME="/backup/db_backup_$(date +%Y%m%d_%H%M).sql"
+              
+              echo "Starting backup..."
+              pg_dump -h my-db-postgresql -U postgres -d my_database > $FILENAME
+              
+              echo "Backup finished: $FILENAME"
+              
+              echo "Starting cleanup of old backups..."
+              find /backup -name "db_backup_*.sql" -mtime +7 -exec rm {} \;
+              echo "Cleanup done."
+            volumeMounts:
+            - name: backup-volume
+              mountPath: /backup
+          restartPolicy: OnFailure
+          volumes:
+          - name: backup-volume
+            persistentVolumeClaim:
+              claimName: postgres-backup-pvc
