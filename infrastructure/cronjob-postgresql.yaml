@@ -11,9 +11,9 @@ spec:
         spec:
           containers:
           - name: postgres-backup
-            image: bitnami/postgresql:16 
+            image: postgres:16-alpine 
             env:
-            - name: DBPASSWORD
+            - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
                   name: my-db-postgresql
