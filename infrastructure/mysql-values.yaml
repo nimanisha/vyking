@@ -1,9 +1,0 @@
-auth:
-  rootPassword: mypassword
-  database: appdb
-  username: user
-  password: mypassword
-primary:
-  persistence:
-    enabled: true
-    size: 2Gi

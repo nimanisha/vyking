@@ -1,20 +1,18 @@
-variable "kubeconfig_path" {
-  type    = string
-  default = "C:/Users/Nima/kubeconfig.yaml"
-}
-
-variable "repo_url" {
-  type = string
-  default = "https://github.com/nimanisha/vyking.git"
-}
-
-variable "repo_branch" {
-  type    = string
-  default = "main"
-}
-
-variable "argocd_namespace" {
-  description = "Namespace where ArgoCD will be installed"
+variable "db_password" {
+  description = "The password for the PostgreSQL root user"
   type        = string
-  default     = "argocd"
+  sensitive   = true
+  default     = "Kia@220995"
+}
+
+variable "db_name" {
+  description = "Name of the initial database"
+  type        = string
+  default     = "postgres "
+}
+
+variable "postgres_version" {
+  description = "Helm chart version for PostgreSQL"
+  type        = string
+  default     = "18.2.0"
 }
