@@ -1,0 +1,13 @@
+postgresql:
+  global:
+    postgresql:
+      auth:
+        existingSecret: "my-db-postgresql"
+        secretKeys:
+          adminPasswordKey: "postgres-password"
+        database: "my_database"
+  primary:
+    persistence:
+      size: 8Gi
+backupJob:
+  schedule: "0 0 1 * *"
