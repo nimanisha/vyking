@@ -9,6 +9,9 @@ spec:
     repoURL: https://github.com/nimanisha/vyking.git
     targetRevision: main
     path: infrastructure 
+    helm:
+      valueFiles:
+        - values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: db

@@ -4,7 +4,7 @@ metadata:
   name: postgres-backup
   namespace: db
 spec:
-  schedule: "0 0 1 * *" 
+  schedule: {{ .Values.backupJob.schedule | quote }} 
   jobTemplate:
     spec:
       template:
