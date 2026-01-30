@@ -4,9 +4,17 @@ image:
   repository: ghcr.io/nimanisha/backend-app 
   tag: latest 
   pullPolicy: Always
-  
+
 imagePullSecrets:
   - name: ghcr-login
+
+database:
+  host: "infrastructure-db-postgresql.db.svc.cluster.local"
+  name: "my_database"
+  user: "postgres"
+  # port: "5432"
+  existingSecret: "my-db-postgresql" 
+
 service:
   type: ClusterIP
   port: 8080
@@ -14,6 +22,3 @@ service:
 serviceAccount:
   create: true
   name: "backend-sa"
-
-nameOverride: ""
-fullnameOverride: ""

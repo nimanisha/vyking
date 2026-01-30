@@ -2,8 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "backend.fullname" . }}
+  namespace: {{ .Release.Namespace }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       {{- include "backend.selectorLabels" . | nindent 6 }}
@@ -19,23 +20,27 @@ spec:
       containers:
         - name: backend
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+            - name: DB_HOST
+              value: {{ .Values.database.host | quote }}
+
+            - name: DB_USERNAME
+              value: {{ .Values.database.name | quote }}
+
+            - name: DB_USER
+              value: {{ .Values.database.user | quote }}
+
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: my-db-postgresql
+                  name: {{ .Values.database.existingSecret }}
                   key: postgres-password
-            
-            - name: DB_USERNAME
-              value: "postgres" 
-
-            - name: DB_HOST
-              value: "my-db-postgresql.db.svc.cluster.local"
-
-            - name: DB_NAME
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "backend.fullname" . }}-config
-                  key: DB_NAME
           ports:
             - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /actuator/health 
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
