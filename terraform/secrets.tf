@@ -9,7 +9,7 @@ resource "kubernetes_secret" "ghcr-login_backend" {
       ".dockerconfigjson" = base64encode(jsonencode({
         auths = {
             "ghcr.io": {
-                username = nimanisha
+                username = "nimanisha"
                 password = var.dockerconfigjson
             }
         }
