@@ -35,3 +35,4 @@ provider "argocd" {
   kubernetes {
     load_config_file = true
 }
+}
