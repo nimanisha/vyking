@@ -24,3 +24,10 @@ provider "helm" {
     config_path = "~/.kube/config"
   }
 }
+provider "argocd" {
+
+  server_addr = "localhost:8080" 
+  insecure    = true
+  username    = "admin"
+  password    = data.kubernetes_secret.argocd_admin_secret.data["password"]
+}
