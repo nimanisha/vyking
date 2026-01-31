@@ -10,6 +10,13 @@ resource "helm_release" "argocd" {
   depends_on = [kubernetes_secret.ghcr-login_backend]
 }
 
+data "kubernetes_secret" "argocd_admin_secret" {
+  metadata {
+    name      = "argocd-initial-admin-secret"
+    namespace = "argocd"
+  }
+  depends_on = [helm_release.argocd]
+}
 resource "argocd_repository" "ghcr_oci" {
   repo     = "ghcr.io/nimanisha/charts" 
   name     = "backend-oci"
@@ -18,7 +25,7 @@ resource "argocd_repository" "ghcr_oci" {
   username = "nimanisha"
   password = var.dockerconfigjson 
 
-  depends_on = [helm_release.argocd]
+  depends_on = [kubernetes_secret.argocd_admin_secret]
 }
 
 resource "null_resource" "apply_argocd_apps" {
