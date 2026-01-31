@@ -32,4 +32,7 @@ provider "argocd" {
   password    = data.kubernetes_secret.argocd_admin_secret.data["password"]
   port_forward = true
   port_forward_with_namespace = "argocd"
+  kubernetes {
+    config_path = "~/.kube/config"
+  }
 }
