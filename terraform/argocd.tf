@@ -25,7 +25,7 @@ resource "argocd_repository" "ghcr_oci" {
   username = "nimanisha"
   password = var.dockerconfigjson 
 
-  depends_on = [kubernetes_secret.argocd_admin_secret]
+  depends_on = [data.kubernetes_secret.argocd_admin_secret]
 }
 
 resource "null_resource" "apply_argocd_apps" {
