@@ -1,17 +1,12 @@
-resource "kubernetes_namespace" "db" {
+locals {
+  namespace = [ "db", "backend", "argocd"]
+}
+resource "kubernetes_namespace" "ns" {
+  for_each = toset(local.namespace)
+  
   metadata {
-    name = "db"
+    name = each.value
   }
+  depends_on = [null_resource.k3d_cluster]
 }
 
-resource "kubernetes_namespace" "backend" {
-  metadata {
-    name = "backend"
-  }
-}
-
-resource "kubernetes_namespace" "argocd" {
-  metadata {
-    name = "argocd"
-  }
-}

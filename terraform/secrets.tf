@@ -15,15 +15,18 @@ resource "kubernetes_secret" "ghcr-login_backend" {
         }
       }))
     }
+    depends_on = [kubernetes_namespace.ns]
 }
 
 resource "kubernetes_secret" "my-db-postgresql_backend" {
+    for_each = setsubtract(toset(local.namespace), ["argocd"])
     metadata {
       name = "my-db-postgresql"
-      namespace = var.namespace
+      namespace = each.value
     }
     type = "Opaque"
     data = {
         postgres-password = var.postgres_password
     }
+    depends_on = [kubernetes_namespace.ns]
 }   

@@ -1,9 +1,9 @@
-variable "db_password" {
-  description = "The password for the PostgreSQL root user"
-  type        = string
-  sensitive   = true
-  default     = "Kia@220995"
-}
+# variable "db_password" {
+#   description = "The password for the PostgreSQL root user"
+#   type        = string
+#   sensitive   = true
+#   default     = ""
+# }
 
 variable "db_name" {
   description = "Name of the initial database"

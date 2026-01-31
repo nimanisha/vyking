@@ -7,4 +7,4 @@ resource "null_resource" "k3d_cluster" {
     when    = destroy
     command = "k3d cluster delete gitops-cluster"
   }
-}
+} 
