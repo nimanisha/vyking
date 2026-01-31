@@ -26,7 +26,7 @@ spec:
             - |
               FILENAME="/backup/db_backup_$(date +%Y%m%d_%H%M).sql"
               
-              cho "Starting backup for {{ .Values.postgresql.global.postgresql.database }}..."
+              echo "Starting backup for {{ .Values.postgresql.global.postgresql.database }}..."
               pg_dump -h {{ .Release.Name }}-postgresql -U postgres -d {{ .Values.postgresql.global.postgresql.database }} > $FILENAME
               
               echo "Backup finished: $FILENAME"
