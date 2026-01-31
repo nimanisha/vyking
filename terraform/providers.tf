@@ -30,4 +30,6 @@ provider "argocd" {
   insecure    = true
   username    = "admin"
   password    = data.kubernetes_secret.argocd_admin_secret.data["password"]
+  port_forward = true
+  port_forward_with_namespace = "argocd"
 }
