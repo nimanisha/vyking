@@ -33,6 +33,5 @@ provider "argocd" {
   port_forward = true
   port_forward_with_namespace = "argocd"
   kubernetes {
-    config_path = "~/.kube/config"
-  }
+    load_config_file = true
 }

@@ -28,6 +28,6 @@ variable "postgres_password" {
   sensitive = true
   
 }
-variable "namespace" {
-  type = string  
-}
+# variable "namespace" {
+#   type = string  
+# }
