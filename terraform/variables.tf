@@ -16,3 +16,18 @@ variable "postgres_version" {
   type        = string
   default     = "18.2.0"
 }
+variable "dockerconfigjson" {
+  description = "GitHub token for my account"
+  type = string
+  sensitive = true
+  
+}
+variable "postgres_password" {
+  description = "DB Password"
+  type = string
+  sensitive = true
+  
+}
+variable "namespace" {
+  type = string  
+}
