@@ -1,3 +1,22 @@
+# resource "kubernetes_secret" "ghcr-login_backend" {
+#     metadata {
+#       name = "ghcr-login"
+#       namespace = "backend"
+#     }
+#     type = "kubernetes.io/dockerconfigjson"
+    
+#     data = {
+#       ".dockerconfigjson" = base64encode(jsonencode({
+#         auths = {
+#             "ghcr.io": {
+#                 username = "nimanisha"
+#                 password = var.dockerconfigjson
+#             }
+#         }
+#       }))
+#     }
+#     depends_on = [kubernetes_namespace.ns]
+# }
 resource "kubernetes_secret" "ghcr-login_backend" {
     metadata {
       name = "ghcr-login"
@@ -6,14 +25,15 @@ resource "kubernetes_secret" "ghcr-login_backend" {
     type = "kubernetes.io/dockerconfigjson"
     
     data = {
-      ".dockerconfigjson" = base64encode(jsonencode({
+      ".dockerconfigjson" = jsonencode({
         auths = {
-            "ghcr.io": {
+            "ghcr.io" = {
                 username = "nimanisha"
                 password = var.dockerconfigjson
+                auth     = base64encode("nimanisha:${var.dockerconfigjson}")
             }
         }
-      }))
+      })
     }
     depends_on = [kubernetes_namespace.ns]
 }
