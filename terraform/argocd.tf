@@ -19,7 +19,7 @@ data "kubernetes_secret" "argocd_admin_secret" {
 }
 resource "argocd_repository" "ghcr_oci" {
   repo     = "ghcr.io/nimanisha/charts" 
-  name     = "backend-oci"
+  name     = "ghcr-charts"
   type     = "helm"
   enable_oci = true
   username = "nimanisha"
