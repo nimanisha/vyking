@@ -50,3 +50,23 @@ resource "kubernetes_secret" "my-db-postgresql_backend" {
     }
     depends_on = [kubernetes_namespace.ns]
 }   
+resource "kubernetes_secret" "ghcr_repo_config" {
+  metadata {
+    name      = "ghcr-repo-config"
+    namespace = "argocd"
+    labels = {
+      "argocd.argoproj.io/secret-type" = "repository"
+    }
+  }
+
+  data = {
+    name     = "ghcr-charts"
+    type     = "helm"
+    url      = "ghcr.io/nimanisha"
+    enableOCI = "true"
+    username = "nimanisha"
+    password = var.dockerconfigjson
+  }
+
+  depends_on = [helm_release.argocd]
+}

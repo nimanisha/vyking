@@ -25,14 +25,17 @@ provider "helm" {
   }
 }
 provider "argocd" {
-
   server_addr = "localhost:8080" 
   insecure    = true
   username    = "admin"
   password    = data.kubernetes_secret.argocd_admin_secret.data["password"]
+
   port_forward = true
   port_forward_with_namespace = "argocd"
-  kubernetes {
-    # load_config_file = true
-}
+
+kubernetes {
+    host                   = null 
+    token                  = null
+    load_config_file       = true 
+  }
 }
