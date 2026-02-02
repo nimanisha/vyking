@@ -1,7 +1,6 @@
 # variable "dockerconfigjson" {
 #   type      = string
 #   sensitive = true
-#   default = "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"
 
 # }
 
