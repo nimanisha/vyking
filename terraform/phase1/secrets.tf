@@ -68,5 +68,5 @@ resource "kubernetes_secret" "ghcr_repo_config" {
     password = var.dockerconfigjson
   }
 
-  depends_on = [helm_release.argocd]
+  depends_on = [time_sleep.wait_for_argocd]
 }
