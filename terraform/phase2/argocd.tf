@@ -7,7 +7,7 @@ resource "helm_release" "argocd" {
 
   wait = true
 
-  depends_on = [kubernetes_secret.ghcr-login_backend]
+  depends_on = [kubernetes_secret.ghcr_repo_config]
 }
 resource "time_sleep" "wait_for_argocd" {
   depends_on = [helm_release.argocd]
@@ -24,28 +24,28 @@ data "kubernetes_secret" "argocd_admin_secret" {
 resource "null_resource" "register_ghcr_repo" {
   depends_on = [data.kubernetes_secret.argocd_admin_secret]
 
-  provisioner "local-exec" {
-    command = <<EOT
-      kubectl port-forward svc/argocd-server -n argocd 8080:443 & 
-      PF_PID=$!
+#   provisioner "local-exec" {
+#     command = <<EOT
+#       kubectl port-forward svc/argocd-server -n argocd 8080:443 & 
+#       PF_PID=$!
       
-      sleep 10
+#       sleep 10
       
-      ARGOCD_PASSWORD=$(kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d)
+#       ARGOCD_PASSWORD=$(kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d)
       
-      argocd repo add ghcr.io/nimanisha/charts \
-        --type helm \
-        --name ghcr-charts \
-        --enable-oci \
-        --username nimanisha \
-        --password ${var.dockerconfigjson} \
-        --server localhost:8080 \
-        --auth-token $ARGOCD_PASSWORD \
-        --insecure
+#       argocd repo add ghcr.io/nimanisha/charts \
+#         --type helm \
+#         --name ghcr-charts \
+#         --enable-oci \
+#         --username nimanisha \
+#         --password ${var.dockerconfigjson} \
+#         --server localhost:8080 \
+#         --auth-token $ARGOCD_PASSWORD \
+#         --insecure
 
-      kill $PF_PID
-    EOT
-  }
+#       kill $PF_PID
+#     EOT
+#   }
 }
 
 
@@ -80,7 +80,7 @@ resource "kubernetes_manifest" "infrastructure_db" {
       }
     }
   }
-  depends_on = [null_resource.register_ghcr_repo, kubernetes_secret.ghcr-login_backend]
+  depends_on = [null_resource.register_ghcr_repo, kubernetes_secret.ghcr_repo_config]
 }
 
 # 2. Backend Application

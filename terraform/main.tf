@@ -1,10 +1,11 @@
-resource "null_resource" "k3d_cluster" {
-  provisioner "local-exec" {
-    command = "k3d cluster create gitops-cluster --api-port 6550 -p '8080:80@loadbalancer' --agents 2 --wait"
-  }
+module "base" {
+  source            = "./modules/phase1_base"
+  postgres_password = var.postgres_password
+}
 
-  provisioner "local-exec" {
-    when    = destroy
-    command = "k3d cluster delete gitops-cluster"
-  }
-} 
+module "apps" {
+  source           = "./modules/phase2_argocd"
+  count            = var.deploy_phase2 ? 1 : 0 
+  dockerconfigjson = var.dockerconfigjson
+  depends_on       = [module.base]
+}
