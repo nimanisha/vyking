@@ -6,6 +6,6 @@ module "base" {
 module "apps" {
   source           = "./modules/phase2_argocd"
   count            = var.deploy_phase2 ? 1 : 0 
-  dockerconfigjson = var.dockerconfigjson
+#   dockerconfigjson = var.dockerconfigjson
   depends_on       = [module.base]
 }
