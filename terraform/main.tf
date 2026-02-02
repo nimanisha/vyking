@@ -1,6 +1,6 @@
 module "phase1" {
   source            = "./phase1"
-#   postgres_password = var.postgres_password
+  postgres_password = var.postgres_password
 }
 
 module "phase2" {

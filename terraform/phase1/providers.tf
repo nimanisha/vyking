@@ -8,20 +8,22 @@ terraform {
       source  = "hashicorp/helm"
       version = "~> 2.0"
     }
-    argocd = {
-      source  = "oboukili/argocd"
-      version = "6.1.1" 
-    }
+    # argocd = {
+    #   source  = "oboukili/argocd"
+    #   version = "6.1.1" 
+    # }
   }
 }
 
 provider "kubernetes" {
   config_path = "~/.kube/config"
+  config_context = "k3d-gitops-cluster"
 }
 
 provider "helm" {
   kubernetes {
     config_path = "~/.kube/config"
+    config_context = "k3d-gitops-cluster"
   }
 }
 # provider "argocd" {
