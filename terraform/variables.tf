@@ -7,7 +7,7 @@ variable "dockerconfigjson" {
   description = "GitHub token for my account"
   type = string
   sensitive = true
-  default = "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"
+  default = "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"
   
 }
 variable "postgres_password" {
