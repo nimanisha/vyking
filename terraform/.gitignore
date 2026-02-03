@@ -1,4 +1,5 @@
 **/.terraform/*
+.terraform/
 *.tfstate
 *.tfstate.*
 crash.log
@@ -6,3 +7,5 @@ crash.log
 *.tfvars.json
 .terraformrc
 terraform.rc
+*.log
+variables.tf
