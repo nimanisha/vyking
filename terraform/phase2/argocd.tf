@@ -1,11 +1,11 @@
 
-data "kubernetes_secret" "argocd_admin_secret" {
-  metadata {
-    name      = "argocd-initial-admin-secret"
-    namespace = "argocd"
-  }
+# data "kubernetes_secret" "argocd_admin_secret" {
+#   metadata {
+#     name      = "argocd-initial-admin-secret"
+#     namespace = "argocd"
+#   }
   # depends_on = [time_sleep.wait_for_argocd]
-}
+# }
 # resource "null_resource" "register_ghcr_repo" {
   # depends_on = [data.kubernetes_secret.argocd_admin_secret]
 

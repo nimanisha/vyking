@@ -1,28 +1,9 @@
-# resource "kubernetes_secret" "ghcr-login_backend" {
-#     metadata {
-#       name = "ghcr-login"
-#       namespace = "backend"
-#     }
-#     type = "kubernetes.io/dockerconfigjson"
-    
-#     data = {
-#       ".dockerconfigjson" = base64encode(jsonencode({
-#         auths = {
-#             "ghcr.io": {
-#                 username = "nimanisha"
-#                 password = var.dockerconfigjson
-#             }
-#         }
-#       }))
-#     }
-#     depends_on = [kubernetes_namespace.ns]
-# }
 resource "kubernetes_secret" "ghcr-login_backend" {
     metadata {
       name = "ghcr-login"
       namespace = "backend"
     }
-    type = "kubernetes.io/dockerconfigjson"
+    type = "Opaque"
     
     data = {
       ".dockerconfigjson" = jsonencode({
@@ -50,23 +31,18 @@ resource "kubernetes_secret" "my-db-postgresql_backend" {
     }
     depends_on = [kubernetes_namespace.ns]
 }   
-resource "kubernetes_secret" "ghcr_repo_config" {
+resource "kubernetes_secret" "ghcr_repo_all" {
   metadata {
-    name      = "ghcr-repo-config"
+    name      = "ghcr-repo-all"
     namespace = "argocd"
-    labels = {
-      "argocd.argoproj.io/secret-type" = "repository"
-    }
+    labels    = { "argocd.argoproj.io/secret-type" = "repository" }
   }
-
   data = {
-    name     = "ghcr-charts"
-    type     = "helm"
-    url      = "ghcr.io/nimanisha"
+    name      = "ghcr-nimanisha"
+    type      = "helm"
+    url       = "ghcr.io/nimanisha" 
     enableOCI = "true"
-    username = "nimanisha"
-    password = var.dockerconfigjson
+    username  = "nimanisha"
+    password  = var.dockerconfigjson
   }
-
-  depends_on = [time_sleep.wait_for_argocd]
 }

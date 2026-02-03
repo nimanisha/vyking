@@ -17,10 +17,6 @@ terraform {
 
 provider "kubernetes" {
   config_path = "~/.kube/config"
-}
-provider "kubernetes" {
-  alias          = "k3d_safe"
-  config_path    = "~/.kube/config"
   config_context = "k3d-gitops-cluster" 
 }
 

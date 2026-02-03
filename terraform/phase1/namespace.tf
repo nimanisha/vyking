@@ -7,6 +7,6 @@ resource "kubernetes_namespace" "ns" {
   metadata {
     name = each.value
   }
-  depends_on = [null_resource.k3d_cluster]
+  # depends_on = [null_resource.k3d_cluster]
 }
 
