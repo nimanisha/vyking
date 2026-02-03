@@ -21,7 +21,7 @@ jobs:
           fetch-depth: 0
 
       - name: Login to GHCR
-        run: echo "{{ secrets.GH_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin      
+        run: echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin      
       - name: Build and push Docker image
         run: |
           IMAGE_ID=ghcr.io/${{ github.repository_owner }}/backend-app
@@ -34,7 +34,7 @@ jobs:
 
       - name: Package and Push Helm Chart (OCI)
         run: |
-          echo "{{ secrets.GH_PAT }}" | helm registry login ghcr.io -u ${{ github.actor }} --password-stdin          
+          echo "${{ secrets.GH_PAT }}" | helm registry login ghcr.io -u ${{ github.actor }} --password-stdin          
           CHART_VER="1.0.${{ github.run_number }}"
           helm package applications/Backend/backend-chart --version $CHART_VER
           LOWER_OWNER=$(echo "${{ github.repository_owner }}" | tr '[A-Z]' '[a-z]')
