@@ -8,4 +8,3 @@ crash.log
 .terraformrc
 terraform.rc
 *.log
-variables.tf
