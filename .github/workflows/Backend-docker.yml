@@ -28,6 +28,7 @@ jobs:
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           docker build applications/Backend/ -t $IMAGE_ID:latest -t $IMAGE_ID:${{ github.run_number }}
           docker push $IMAGE_ID --all-tags
+          docker push $IMAGE_ID:latest
 
       - name: Install Helm
         uses: azure/setup-helm@v4

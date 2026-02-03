@@ -1,22 +1,26 @@
 resource "kubernetes_secret" "ghcr-login_backend" {
-    metadata {
-      name = "ghcr-login"
-      namespace = "backend"
-    }
-    type = "Opaque"
-    
-    data = {
-      ".dockerconfigjson" = jsonencode({
-        auths = {
-            "ghcr.io" = {
-                username = "nimanisha"
-                password = var.dockerconfigjson
-                auth     = base64encode("nimanisha:${var.dockerconfigjson}")
-            }
+  metadata {
+    name      = "ghcr-login"
+    namespace = "backend"
+  }
+
+  # استفاده از نوع رسمی داکر
+  type = "kubernetes.io/dockerconfigjson"
+
+  # استفاده از binary_data باعث می‌شود ترافورم دیگر محتوا را دستکاری نکند
+  binary_data = {
+    ".dockerconfigjson" = base64encode(jsonencode({
+      auths = {
+        "ghcr.io" = {
+          username = "nimanisha"
+          password = var.dockerconfigjson
+          # فقط بخش داخلی یوزر:پسورد نیاز به انکود دارد
+          auth     = base64encode("nimanisha:${var.dockerconfigjson}")
         }
-      })
-    }
-    depends_on = [kubernetes_namespace.ns]
+      }
+    }))
+  }
+  depends_on = [kubernetes_namespace.ns]
 }
 
 resource "kubernetes_secret" "my-db-postgresql_backend" {

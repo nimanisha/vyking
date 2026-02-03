@@ -8,36 +8,18 @@ terraform {
       source  = "hashicorp/helm"
       version = "~> 2.0"
     }
-    # argocd = {
-    #   source  = "oboukili/argocd"
-    #   version = "6.1.1" 
-    # }
   }
 }
 
 provider "kubernetes" {
   config_path = "~/.kube/config"
-  config_context = "k3d-gitops-cluster" 
-}
+    config_context = "k3d-${var.cluster_name}" 
+  }
 
 provider "helm" {
   kubernetes {
     config_path = "~/.kube/config"
-    config_context = "k3d-gitops-cluster"
+    config_context = "k3d-${var.cluster_name}"
   }
 }
-# provider "argocd" {
-#   server_addr = "localhost:8080" 
-#   insecure    = true
-#   username    = "admin"
-#   password    = data.kubernetes_secret.argocd_admin_secret.data["password"]
 
-#   port_forward = true
-#   port_forward_with_namespace = "argocd"
-
-# kubernetes {
-#     host                   = null 
-#     token                  = null
-#     load_config_file       = true 
-#   }
-# }
