@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/nimanisha/charts/backend-chart 
+  repository: ghcr.io/nimanisha/backend-app 
   tag: latest 
   pullPolicy: Always
 
