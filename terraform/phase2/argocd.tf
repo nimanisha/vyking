@@ -1,39 +1,3 @@
-
-# data "kubernetes_secret" "argocd_admin_secret" {
-#   metadata {
-#     name      = "argocd-initial-admin-secret"
-#     namespace = "argocd"
-#   }
-  # depends_on = [time_sleep.wait_for_argocd]
-# }
-# resource "null_resource" "register_ghcr_repo" {
-  # depends_on = [data.kubernetes_secret.argocd_admin_secret]
-
-#   provisioner "local-exec" {
-#     command = <<EOT
-#       kubectl port-forward svc/argocd-server -n argocd 8080:443 & 
-#       PF_PID=$!
-      
-#       sleep 10
-      
-#       ARGOCD_PASSWORD=$(kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d)
-      
-#       argocd repo add ghcr.io/nimanisha/charts \
-#         --type helm \
-#         --name ghcr-charts \
-#         --enable-oci \
-#         --username nimanisha \
-#         --password ${var.dockerconfigjson} \
-#         --server localhost:8080 \
-#         --auth-token $ARGOCD_PASSWORD \
-#         --insecure
-
-#       kill $PF_PID
-#     EOT
-#   }
-# }
-
-
 resource "kubernetes_manifest" "infrastructure_db" {
   manifest = {
     apiVersion = "argoproj.io/v1alpha1"
