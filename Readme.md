@@ -24,18 +24,18 @@ docker --version
 kubectl version --client
 k3d version
 terraform version
-'''
+```
 Step 1: Create a Local Kubernetes Cluster with k3d
 Create a Kubernetes cluster named mycluster with one server and two agents, and expose HTTP/HTTPS ports via a load balancer.
 
-bash'''
-Copy code
+```bash
+
 k3d cluster create mycluster \
   --api-port 6550 \
   -p "80:80@loadbalancer" \
   -p "443:443@loadbalancer" \
   --agents 2
-  '''
+```
 Notes
 The cluster name must be remembered, as it will be required later in Terraform variables.
 
@@ -51,37 +51,35 @@ This allows access to the frontend application via a friendly domain name.
 Step 3: Clone the Vyking Repository
 Clone the project repository from GitHub and move into the project directory.
 
-bash'''
-
+```bash
 git clone https://github.com/nimanisha/vyking.git
 cd vyking
 Step 4: Install Terraform (v1.14.3)
 Install the required Terraform version.
+```
 
 Example (Linux)
-bash
+```bash
 Copy code
 wget https://releases.hashicorp.com/terraform/1.14.3/terraform_1.14.3_linux_amd64.zip
 unzip terraform_1.14.3_linux_amd64.zip
 sudo mv terraform /usr/local/bin/
-'''
+```
 Verify:
 
-bash'''
-
+```bash
 terraform version
 Expected output includes:
-'''
+```
 
 Terraform v1.14.3
 Step 5: Initialize Terraform
 Navigate to the Terraform directory and initialize the working directory.
 
-bash'''
-
+```bash
 cd terraform
 terraform init
-'''
+```
 This downloads required providers and prepares Terraform for execution.
 
 Step 6: Provide Required Terraform Variables
@@ -112,10 +110,10 @@ Should be kept secret and not committed to Git.
 Step 7: Terraform Plan (Phase 1)
 Run Terraform plan with phase 2 disabled.
 
-bash'''
+```bash
 Copy code
 terraform plan --var=deploy_phase2=false
-'''
+```
 This step validates:
 
 Kubernetes connectivity
@@ -129,14 +127,14 @@ No changes are applied yet.
 Step 8: Terraform Apply (Phase 1)
 If the plan succeeds, apply the configuration:
 
-bash'''
- 
+```bash
 terraform apply --var=deploy_phase2=false
+```
 (Optional, non-interactive):
-'''
-bash'''
+
+```bash
 terraform apply --var=deploy_phase2=false --auto-approve
-'''
+```
 What Terraform Does in This Phase
 Creates required Kubernetes namespaces
 
@@ -149,9 +147,9 @@ After Argo CD is installed, Terraform outputs the initial admin password.
 
 Retrieve it with:
 
-bash'''
+```bash
 terraform output argocd_initial_password
-'''
+```
 Use:
 
 Username: admin
@@ -211,27 +209,19 @@ Infrastructure and applications remain declarative and versioned
 Security Notes
 Secrets are provided dynamically and should never be committed to Git
 
-For production environments, consider:
 
-Sealed Secrets
-
-Mozilla SOPS
-
-HashiCorp Vault
-
-External Secrets Operator
 
 Cleanup (Optional)
 To remove all resources:
 
-bash'''
+```bash
 terraform destroy --auto-approve
 Delete the k3d cluster:
-'''
 
-bash'''
+```
+```bash
 k3d cluster delete mycluster
-'''
+```
 Final Result
 After completing all steps:
 
