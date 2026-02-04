@@ -18,5 +18,5 @@ variable "postgres_password" {
 }
 variable "cluster_name" {
     type = string
-    default = "gitops-cluster"
+    # default = "gitops-cluster"
 }

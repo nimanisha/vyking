@@ -13,4 +13,14 @@ resource "time_sleep" "wait_for_argocd" {
   depends_on = [helm_release.argocd]
   create_duration = "30s"
 }
+data "kubernetes_secret" "argocd_admin_pwd" {
+  metadata {
+    name      = "argocd-initial-admin-secret"
+    namespace = "argocd"
+  }
+}
 
+output "argocd_password" {
+  value     = data.kubernetes_secret.argocd_admin_pwd.data["password"]
+  sensitive = true
+}
