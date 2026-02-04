@@ -14,7 +14,6 @@ variable "postgres_password" {
   description = "DB Password"
   type = string
   sensitive = true
-  default = "Kia@220995"
   
 }
 variable "cluster_name" {
