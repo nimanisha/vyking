@@ -8,6 +8,13 @@ resource "kubernetes_manifest" "infrastructure_db" {
     }
     spec = {
       project = "default"
+      ignoreDifferences = [
+        {
+          group = ""
+          kind  = "PersistentVolumeClaim"
+          name  = "postgres-backup-pvc"
+        }
+      ]
       source = {
         repoURL        = "https://github.com/nimanisha/vyking.git"
         targetRevision = "main"
