@@ -8,3 +8,4 @@ crash.log
 .terraformrc
 terraform.rc
 *.log
+.DS_Store

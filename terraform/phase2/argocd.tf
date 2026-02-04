@@ -13,6 +13,10 @@ resource "kubernetes_manifest" "infrastructure_db" {
           group = ""
           kind  = "PersistentVolumeClaim"
           name  = "postgres-backup-pvc"
+          jsonPointers = [
+            "/spec/volumeName",
+            "/metadata/annotations/pv.kubernetes.io~1bind-completed"
+          ]
         }
       ]
       source = {
