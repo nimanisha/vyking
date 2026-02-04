@@ -4,17 +4,14 @@ resource "kubernetes_secret" "ghcr-login_backend" {
     namespace = "backend"
   }
 
-  # استفاده از نوع رسمی داکر
   type = "kubernetes.io/dockerconfigjson"
 
-  # استفاده از binary_data باعث می‌شود ترافورم دیگر محتوا را دستکاری نکند
   binary_data = {
     ".dockerconfigjson" = base64encode(jsonencode({
       auths = {
         "ghcr.io" = {
           username = "nimanisha"
           password = var.dockerconfigjson
-          # فقط بخش داخلی یوزر:پسورد نیاز به انکود دارد
           auth     = base64encode("nimanisha:${var.dockerconfigjson}")
         }
       }
