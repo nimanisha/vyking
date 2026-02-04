@@ -60,7 +60,6 @@ Install the required Terraform version.
 
 Example (Linux)
 ```bash
-Copy code
 wget https://releases.hashicorp.com/terraform/1.14.3/terraform_1.14.3_linux_amd64.zip
 unzip terraform_1.14.3_linux_amd64.zip
 sudo mv terraform /usr/local/bin/
@@ -111,7 +110,6 @@ Step 7: Terraform Plan (Phase 1)
 Run Terraform plan with phase 2 disabled.
 
 ```bash
-Copy code
 terraform plan --var=deploy_phase2=false
 ```
 This step validates:
