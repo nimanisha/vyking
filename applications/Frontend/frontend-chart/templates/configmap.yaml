@@ -3,18 +3,5 @@ kind: ConfigMap
 metadata:
   name: {{ include "frontend.fullname" . }}-config
 data:
-  index.html: |-
-{{ .Files.Get "index.html" | indent 4 }}
-  nginx.conf: |
-    server {
-        listen 80;
-        location / {
-            root /usr/share/nginx/html;
-            index index.html;
-        }
-        location /api/ {
-            proxy_pass {{ .Values.backendUrl }};
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-        }
-    }
+  index.html: {{ tpl (.Files.Get "index.html") . | indent 4 }}
+  nginx.conf: {{ tpl (.Files.Get "nginx.conf") . | indent 4 }}
