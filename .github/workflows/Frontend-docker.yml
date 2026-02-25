@@ -8,7 +8,31 @@ on:
       - '.github/workflows/Frontend-docker.yml'
 
 jobs:
+  security_scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner (Helm)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          directory: 'applications/Frontend/frontend-chart'
+          format: 'sarif' 
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy scan results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+
   release:
+    needs: security_scan 
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -28,7 +52,7 @@ jobs:
 
       - name: Package and Push OCI
         run: |
-          BASE_VERSION=$(grep '^version:' applications/Frontend/frontend-chart/Chart.yaml | awk '{print $2}' | tr -d '"' | tr -d "'")       
+          BASE_VERSION=$(grep '^version:' applications/Frontend/frontend-chart/Chart.yaml | awk '{print $2}' | tr -d '"' | tr -d "'")        
           NEW_VERSION="${BASE_VERSION}.${{ github.run_number }}"
           echo "Building version: $NEW_VERSION"
 
