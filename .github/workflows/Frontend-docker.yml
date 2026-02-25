@@ -27,7 +27,13 @@ jobs:
             -Dsonar.projectKey=nimanisha_vyking
             -Dsonar.organization=nimanisha
             -Dsonar.sources=applications/Frontend
-
+            -Dsonar.sarifReportPath=sonar-results.sarif
+            
+      - name: Upload Sonar results to GitHub Security
+              uses: github/codeql-action/upload-sarif@v3
+              if: always() 
+              with:
+                sarif_file: sonar-results.sarif
       - name: Dependency Check
         uses: dependency-check/Dependency-Check_Action@main
         with:
