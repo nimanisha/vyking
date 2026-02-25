@@ -1,4 +1,5 @@
 name: Frontend Release Charts - SAST
+
 on:
   push:
     branches: [ "main" ] 
@@ -17,6 +18,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v4
         env:
@@ -28,7 +30,7 @@ jobs:
             -Dsonar.organization=nimanisha
             -Dsonar.sources=applications/Frontend
 
-      - name: Trivy FS Scan (Code & Deps)
+      - name: Trivy FS Scan (Dependencies)
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
@@ -36,19 +38,20 @@ jobs:
           format: 'sarif'
           output: 'trivy-fs-results.sarif'
           severity: 'CRITICAL,HIGH'
-      - name: Trivy Config Scan (Infrastructure)
+
+      - name: Trivy Config Scan (IaC)
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'config,fs' 
+          scan-type: 'config'
           format: 'sarif'
-          output: 'trivy-results.sarif'
+          output: 'trivy-config-results.sarif'
           severity: 'CRITICAL,HIGH'
 
       - name: Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v4
+        uses: github/codeql-action/upload-sarif@v3
         if: always() 
         with:
-          sarif_file: '.'
+          sarif_file: '.' 
           category: 'trivy'         
 
       - name: Dependency Check
@@ -67,6 +70,7 @@ jobs:
 
   release:
     needs: security_scans 
+    if: success() 
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -86,7 +90,6 @@ jobs:
         run: |
           BASE_VERSION=$(grep '^version:' applications/Frontend/frontend-chart/Chart.yaml | awk '{print $2}' | tr -d '"' | tr -d "'")       
           NEW_VERSION="${BASE_VERSION}.${{ github.run_number }}"
-          echo "Building version: $NEW_VERSION"
           LOWER_OWNER=$(echo "${{ github.repository_owner }}" | tr '[A-Z]' '[a-z]')
           helm package applications/Frontend/frontend-chart --version $NEW_VERSION
           helm push frontend-chart-$NEW_VERSION.tgz oci://ghcr.io/$LOWER_OWNER/charts
