@@ -1,4 +1,4 @@
-name: Release Charts
+name: Release Charts with Security Scans
 
 on:
   push:
@@ -8,31 +8,46 @@ on:
       - '.github/workflows/Frontend-docker.yml'
 
 jobs:
-  security_scan:
-    name: Security Scan
+  security_scans:
+    name: Security Analysis
     runs-on: ubuntu-latest
-    permissions:
-      security-events: write 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Run Trivy vulnerability scanner (Helm)
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'Frontend'
+          path: 'applications/Frontend'
+          format: 'HTML'
+          out: 'reports'
+
+      - name: Trivy Scan (Helm Chart)
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'config'
-          directory: 'applications/Frontend/frontend-chart'
-          format: 'sarif' 
-          output: 'trivy-results.sarif'
+          hide-progress: false
+          format: 'table'
+          exit-code: '1'
           severity: 'CRITICAL,HIGH'
 
-      - name: Upload Trivy scan results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3
+      - name: Upload Security Reports
+        uses: actions/upload-artifact@v4
         with:
-          sarif_file: 'trivy-results.sarif'
+          name: security-reports
+          path: reports/
 
   release:
-    needs: security_scan 
+    needs: security_scans 
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -40,8 +55,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Install Helm
         uses: azure/setup-helm@v4
@@ -52,10 +65,9 @@ jobs:
 
       - name: Package and Push OCI
         run: |
-          BASE_VERSION=$(grep '^version:' applications/Frontend/frontend-chart/Chart.yaml | awk '{print $2}' | tr -d '"' | tr -d "'")        
+          BASE_VERSION=$(grep '^version:' applications/Frontend/frontend-chart/Chart.yaml | awk '{print $2}' | tr -d '"' | tr -d "'")       
           NEW_VERSION="${BASE_VERSION}.${{ github.run_number }}"
           echo "Building version: $NEW_VERSION"
-
           LOWER_OWNER=$(echo "${{ github.repository_owner }}" | tr '[A-Z]' '[a-z]')
           helm package applications/Frontend/frontend-chart --version $NEW_VERSION
           helm push frontend-chart-$NEW_VERSION.tgz oci://ghcr.io/$LOWER_OWNER/charts
