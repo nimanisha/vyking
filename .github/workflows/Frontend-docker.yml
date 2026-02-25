@@ -39,6 +39,13 @@ jobs:
           output: 'trivy-fs-results.sarif'
           severity: 'CRITICAL,HIGH'
 
+      - name: Upload Trivy FS results
+        uses: github/codeql-action/upload-sarif@v4 
+        if: always()
+        with:
+          sarif_file: 'trivy-fs-results.sarif'
+          category: 'trivy-fs'
+
       - name: Trivy Config Scan (IaC)
         uses: aquasecurity/trivy-action@master
         with:
@@ -46,6 +53,12 @@ jobs:
           format: 'sarif'
           output: 'trivy-config-results.sarif'
           severity: 'CRITICAL,HIGH'
+      - name: Upload Trivy Config results
+        uses: github/codeql-action/upload-sarif@v4 
+        if: always()
+        with:
+          sarif_file: 'trivy-config-results.sarif'
+          category: 'trivy-config'
 
       - name: Upload Trivy results to GitHub Security
         uses: github/codeql-action/upload-sarif@v3
