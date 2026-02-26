@@ -29,6 +29,7 @@ jobs:
             -Dsonar.projectKey=nimanisha_vyking_backend
             -Dsonar.organization=nimanisha
             -Dsonar.sources=applications/Backend
+            -Dsonar.projectName=Vyking-Backend
 
       - name: Trivy Config Scan (IaC)
         uses: aquasecurity/trivy-action@master
