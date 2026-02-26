@@ -17,10 +17,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      # ۱. اصلاح SonarCloud (استفاده از نسخه پایدار)
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v4
+        uses: sonarsource/sonarqube-scan-action@v5 # ارتقا به نسخه جدیدتر
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -30,6 +28,9 @@ jobs:
             -Dsonar.organization=nimanisha
             -Dsonar.sources=applications/Backend
             -Dsonar.projectName=vyking-backend
+            -Dsonar.java.binaries=target/classes,build/classes # مسیرهای استاندارد جاوا
+            -Dsonar.condition.wait=false # منتظر تایید سرور نماند تا پایپ‌لاین سریع‌تر شود
+
 
       # ۲. اسکن Trivy Config با تعیین دقیق مسیر (Template/Dockerfile)
       - name: Trivy Config Scan (IaC)
