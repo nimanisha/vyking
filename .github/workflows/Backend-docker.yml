@@ -79,11 +79,16 @@ jobs:
           format: 'sarif'
           output: 'trivy-image-results.sarif'
           severity: 'CRITICAL,HIGH'
+          # اضافه کردن این خطوط برای دور زدن مشکل دانلود:
+          java-db-repository: 'public.ecr.aws/aquasecurity/trivy-java-db' 
+          trivy-config: 'trivy.yaml' # اختیاری، اگر فایل تنظیمات دارید
+        env:
+          TRIVY_DB_REPOSITORY: 'public.ecr.aws/aquasecurity/trivy-db'
 
       - name: Upload Image results to GitHub
         uses: github/codeql-action/upload-sarif@v4
-        if: always()
-        continue-on-error: true
+        # فقط در صورتی اجرا شود که فایل واقعاً ساخته شده باشد
+        if: always() && hashFiles('trivy-image-results.sarif') != ''
         with:
           sarif_file: 'trivy-image-results.sarif'
           category: 'backend-image'
