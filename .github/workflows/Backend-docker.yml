@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 0
           
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v5 # یا v4
+        uses: SonarSource/sonarqube-scan-action@v5 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -30,10 +30,8 @@ jobs:
             -Dsonar.sources=applications/Backend
             -Dsonar.projectName=vyking-backend
             -Dsonar.java.binaries=.
-            -Dsonar.condition.wait=falseمنتظر تایید سرور نماند تا پایپ‌لاین سریع‌تر شود
+            -Dsonar.condition.wait=false
 
-
-      # ۲. اسکن Trivy Config با تعیین دقیق مسیر (Template/Dockerfile)
       - name: Trivy Config Scan (IaC)
         uses: aquasecurity/trivy-action@master
         with:
