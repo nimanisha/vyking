@@ -28,9 +28,10 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=nimanisha_vyking
+            -Dsonar.projectKey=nimanisha_vyking_frontend
             -Dsonar.organization=nimanisha
             -Dsonar.sources=applications/Frontend
+            -Dsonar.projectName=Vyking-Frontend
 
       - name: Trivy FS Scan
         uses: aquasecurity/trivy-action@master
