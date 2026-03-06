@@ -1,4 +1,4 @@
-replicaCount: 1
+replicaCount: 2
 
 image:
   repository: ghcr.io/nimanisha/backend-app 
@@ -19,6 +19,13 @@ service:
   type: ClusterIP
   port: 8080
 
-serviceAccount:
-  create: true
-  name: "backend-sa"
+
+istio:
+  enabled: true
+  host: "backend.k3d.localhost"
+
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 4
+  targetLatency: "200ms"  

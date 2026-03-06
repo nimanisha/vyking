@@ -1,0 +1,23 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: backend-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: backend-app
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Object
+    object:
+      metric:
+        name: istio_requests_latency_p95 
+      describedObject:
+        apiVersion: networking.istio.io/v1alpha3
+        kind: VirtualService
+        name: backend-vs
+      target:
+        type: Value
+        value: "200ms"
