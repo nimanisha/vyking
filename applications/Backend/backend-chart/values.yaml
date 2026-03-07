@@ -19,7 +19,14 @@ service:
   type: ClusterIP
   port: 8080
 
-
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+    
 istio:
   enabled: true
   host: "backend.k3d.localhost"

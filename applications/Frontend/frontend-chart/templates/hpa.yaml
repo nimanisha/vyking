@@ -2,6 +2,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "frontend.fullname" . }}
+  namespace: {{ .Release.Namespace }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -16,3 +17,15 @@ spec:
       target:
         type: Utilization
         averageUtilization: {{ .Values.hpa.targetCPU }}
+  - type: Object
+    object:
+      metric:
+        name: istio_requests_latency_p95 
+      describedObject:
+        apiVersion: networking.istio.io/v1alpha3
+        kind: VirtualService
+        name: {{ include "frontend.fullname" . }}
+      target:
+        type: Value
+        value: {{ .Values.hpa.targetLatency | default "100ms" | quote }}
+{{- end }}      
