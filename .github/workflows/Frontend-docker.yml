@@ -1,4 +1,4 @@
-name: Release Charts
+name: Frontend Release Charts - Professional Security
 
 on:
   push:
@@ -8,7 +8,80 @@ on:
       - '.github/workflows/Frontend-docker.yml'
 
 jobs:
+  security_scans:
+    name: Security Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write 
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=nimanisha_vyking_frontend
+            -Dsonar.organization=nimanisha
+            -Dsonar.sources=applications/Frontend
+            -Dsonar.projectName=Vyking-Frontend
+
+      - name: Trivy FS Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: 'applications/Frontend'
+          format: 'sarif'
+          output: 'trivy-fs-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy FS results
+        uses: github/codeql-action/upload-sarif@v4 
+        if: always() 
+        with:
+          sarif_file: 'trivy-fs-results.sarif'
+          category: 'frontend-dependencies'
+
+      - name: Trivy Config Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          format: 'sarif'
+          output: 'trivy-config-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy Config results
+        uses: github/codeql-action/upload-sarif@v4 
+        if: always()
+        with:
+          sarif_file: 'trivy-config-results.sarif'
+          category: 'frontend-infrastructure'
+
+      - name: Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'Frontend'
+          path: 'applications/Frontend'
+          format: 'HTML'
+          out: 'reports'
+
+      - name: Upload HTML Security Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-reports
+          path: reports/
+
   release:
+    needs: security_scans 
+    if: success() 
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -16,8 +89,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Install Helm
         uses: azure/setup-helm@v4
@@ -30,8 +101,6 @@ jobs:
         run: |
           BASE_VERSION=$(grep '^version:' applications/Frontend/frontend-chart/Chart.yaml | awk '{print $2}' | tr -d '"' | tr -d "'")       
           NEW_VERSION="${BASE_VERSION}.${{ github.run_number }}"
-          echo "Building version: $NEW_VERSION"
-
           LOWER_OWNER=$(echo "${{ github.repository_owner }}" | tr '[A-Z]' '[a-z]')
           helm package applications/Frontend/frontend-chart --version $NEW_VERSION
           helm push frontend-chart-$NEW_VERSION.tgz oci://ghcr.io/$LOWER_OWNER/charts

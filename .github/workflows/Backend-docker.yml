@@ -1,42 +1,104 @@
-name: Vyking backend CI
+name: Backend CI - Professional SAST & Security
 
 on:
   push:
     branches: [ "main" ]
-    paths:
-      - 'applications/Backend/**'
-      - '.github/workflows/Backend-docker.yml'
+  workflow_dispatch: 
 
 jobs:
+  security_audit:
+    name: Security Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write 
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v5 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=nimanisha_vyking_backend
+            -Dsonar.organization=nimanisha
+            -Dsonar.sources=applications/Backend
+            -Dsonar.projectName=vyking-backend
+            -Dsonar.java.binaries=.
+            -Dsonar.condition.wait=false
+
+      - name: Trivy Config Scan (IaC)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          scan-ref: 'applications/Backend' 
+          format: 'sarif'
+          output: 'trivy-config-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Config results to GitHub
+        uses: github/codeql-action/upload-sarif@v4
+        if: always()
+        continue-on-error: true 
+        with:
+          sarif_file: 'trivy-config-results.sarif'
+          category: 'backend-infrastructure'
+
   build-and-push:
+    needs: security_audit
     runs-on: ubuntu-latest
     permissions:
       contents: write
       packages: write
-
+      security-events: write
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Login to GHCR
-        run: echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin      
-      - name: Build and push Docker image
+        run: echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build Docker Image
         run: |
           IMAGE_ID=ghcr.io/${{ github.repository_owner }}/backend-app
-          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')          
-          docker build applications/Backend/ -t $IMAGE_ID:latest -t $IMAGE_ID:${{ github.run_number }}          
-          docker push $IMAGE_ID:${{ github.run_number }}          
-          docker push $IMAGE_ID:latest
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          docker build applications/Backend/ -t $IMAGE_ID:${{ github.run_number }} -t $IMAGE_ID:latest
+          echo "IMAGE_TAG=$IMAGE_ID:${{ github.run_number }}" >> $GITHUB_ENV
 
-      - name: Install Helm
-        uses: azure/setup-helm@v4
+      - name: Trivy Image Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.IMAGE_TAG }}
+          format: 'sarif'
+          output: 'trivy-image-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          java-db-repository: 'public.ecr.aws/aquasecurity/trivy-java-db:1'
+        env:
+          TRIVY_DB_REPOSITORY: 'public.ecr.aws/aquasecurity/trivy-db:2'
+          TRIVY_JAVA_DB_REPOSITORY: 'public.ecr.aws/aquasecurity/trivy-java-db:1'
 
-      - name: Package and Push Helm Chart (OCI)
+      - name: Upload Image results to GitHub
+        uses: github/codeql-action/upload-sarif@v4
+        if: always() && hashFiles('trivy-image-results.sarif') != ''
+        with:
+          sarif_file: 'trivy-image-results.sarif'
+          category: 'backend-image'
+
+      - name: Finalize Release
+        if: success()
         run: |
-          echo "${{ secrets.GH_PAT }}" | helm registry login ghcr.io -u ${{ github.actor }} --password-stdin          
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/backend-app
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          docker push $IMAGE_ID:${{ github.run_number }}
+          docker push $IMAGE_ID:latest
+          
+          # Helm Registry Login
+          echo "${{ secrets.GH_PAT }}" | helm registry login ghcr.io -u ${{ github.actor }} --password-stdin
           CHART_VER="1.0.${{ github.run_number }}"
           helm package applications/Backend/backend-chart --version $CHART_VER
-          LOWER_OWNER=$(echo "${{ github.repository_owner }}" | tr '[A-Z]' '[a-z]')
-          helm push backend-chart-*.tgz oci://ghcr.io/$LOWER_OWNER/charts
+          helm push backend-chart-*.tgz oci://ghcr.io/$(echo ${{ github.repository_owner }} | tr '[A-Z]' '[a-z]')/charts
