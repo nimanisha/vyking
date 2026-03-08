@@ -21,6 +21,6 @@ data "kubernetes_secret" "argocd_admin_pwd" {
 }
 
 output "argocd_password" {
-  value     = data.kubernetes_secret.argocd_admin_pwd.data["password"]
-  sensitive = true
+value     = try(data.kubernetes_secret.argocd_admin_pwd.data["password"], "")
+sensitive = true
 }
