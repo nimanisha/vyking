@@ -2,7 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "frontend.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
+    sidecar.istio.io/inject: "true"
     {{- include "frontend.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.hpa.enabled }}
@@ -13,7 +15,6 @@ spec:
       {{- include "frontend.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      namespace: {{ .Release.Namespace }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
       labels:

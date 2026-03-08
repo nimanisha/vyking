@@ -1,30 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Rating System</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
 <body class="container mt-5">
-    <h2>Register rate of Users</h2>
-    <form id="rateForm" class="mb-4">
-        <input type="text" id="name" placeholder="Name" class="form-control mb-2" required>
-        <input type="text" id="surname" placeholder="Surname" class="form-control mb-2" required>
-        <input type="number" id="rate" placeholder="Rate (1-10)" class="form-control mb-2" required>
-        <button type="submit" class="btn btn-primary">Register your Rate</button>
-    </form>
+    <header>
+        <h2>Register rate of Users</h2>
+    </header>
+    
+    <main>
+        <form id="rateForm" class="mb-4">
+            <div class="mb-2">
+                <label for="name" class="visually-hidden">Name</label>
+                <input type="text" id="name" placeholder="Name" class="form-control" required>
+            </div>
+            <div class="mb-2">
+                <label for="surname" class="visually-hidden">Surname</label>
+                <input type="text" id="surname" placeholder="Surname" class="form-control" required>
+            </div>
+            <div class="mb-2">
+                <label for="rate" class="visually-hidden">Rate (1-10)</label>
+                <input type="number" id="rate" placeholder="Rate (1-10)" class="form-control" min="1" max="10" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Register your Rate</button>
+        </form>
 
-    <hr>
-    <h3>List of Rates</h3>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Surname</th>
-                <th>Rate</th>
-            </tr>
-        </thead>
-        <tbody id="userTableBody"></tbody>
-    </table>
+        <hr>
+        <h3>List of Rates</h3>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Surname</th>
+                        <th scope="col">Rate</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody"></tbody>
+            </table>
+        </div>
+    </main>
 
     <script>
         const API_URL = '/api/users'; 
@@ -34,14 +52,26 @@
                 const response = await fetch(API_URL);
                 const users = await response.json();
                 const tableBody = document.getElementById('userTableBody');
-                tableBody.innerHTML = '';
+                
+                tableBody.textContent = '';
+
                 users.forEach(user => {
-                    tableBody.innerHTML += `
-                        <tr>
-                            <td>${user.name}</td>
-                            <td>${user.surname}</td>
-                            <td>${user.rate}</td>
-                        </tr>`;
+                    const row = document.createElement('tr');
+
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = user.name;
+                    
+                    const surnameCell = document.createElement('td');
+                    surnameCell.textContent = user.surname;
+                    
+                    const rateCell = document.createElement('td');
+                    rateCell.textContent = user.rate;
+
+                    row.appendChild(nameCell);
+                    row.appendChild(surnameCell);
+                    row.appendChild(rateCell);
+                    
+                    tableBody.appendChild(row);
                 });
             } catch (error) {
                 console.error('Error fetching users:', error);
@@ -57,13 +87,16 @@
             };
 
             try {
-                await fetch(API_URL, {
+                const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(userData)
                 });
-                fetchUsers();
-                e.target.reset();
+                
+                if (response.ok) {
+                    fetchUsers();
+                    e.target.reset();
+                }
             } catch (error) {
                 console.error('Error submitting rate:', error);
             }

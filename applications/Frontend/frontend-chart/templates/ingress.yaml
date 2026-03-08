@@ -20,3 +20,4 @@ spec:
                 name: {{ include "frontend.fullname" . }}
                 port:
                   number: 80
+{{- end }}                  
