@@ -28,4 +28,3 @@ spec:
       target:
         type: Value
         value: {{ .Values.hpa.targetLatency | default "100ms" | quote }}
-{{- end }}      
