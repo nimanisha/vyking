@@ -1,0 +1,21 @@
+{{- if .Values.istio.enabled }}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "frontend.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  hosts:
+  - {{ .Values.istio.host }}
+  gateways:
+  - istio-system/main-gateway 
+  http:
+  - route:
+    - destination:
+        host: {{ include "frontend.fullname" . }}
+        port:
+          number: {{ .Values.service.port }}
+    retries:
+      attempts: 3
+      perTryTimeout: 1s
+{{- end }}

@@ -3,10 +3,16 @@ replicaCount: 2
 image:
   repository: nginx
   tag: alpine
+  pullPolicy: IfNotPresent
+istio:
+  enabled: true
+  host: "frontend.k3d.localhost"
+  mtlsMode: STRICT
 
 service:
   type: ClusterIP
   port: 80
+
 serviceAccount:
   create: true
   name: "frontend-service-account"  
@@ -17,8 +23,20 @@ hpa:
   minReplicas: 1
   maxReplicas: 2
   targetCPU: 80
+  targetLatency: "100ms"
 ingress:
-  enabled: true
+  enabled: false
   className: "traefik"
   host: "frontend.k3d.localhost" 
   path: /
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi
+
+# image:
+#   pullPolicy: IfNotPresent
