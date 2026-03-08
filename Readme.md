@@ -68,10 +68,10 @@ Verify:
 
 ```bash
 terraform version
-Expected output includes:
+Expected output includes:Terraform v1.14.3
+
 ```
 
-Terraform v1.14.3
 Step 5: Initialize Terraform
 Navigate to the Terraform directory and initialize the working directory.
 
