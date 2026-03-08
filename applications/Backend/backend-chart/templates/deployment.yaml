@@ -16,6 +16,7 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        sidecar.istio.io/inject: "true"
       labels:
         {{- include "backend.selectorLabels" . | nindent 8 }}
     spec:

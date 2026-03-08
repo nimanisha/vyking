@@ -4,8 +4,9 @@ resource "helm_release" "argocd" {
   chart            = "argo-cd"
   namespace        = "argocd"
   create_namespace = false
-
+  version    = "7.7.7"
   wait = true
+  timeout = 900
 
   depends_on = [kubernetes_secret.my-db-postgresql_backend]
 }
@@ -20,7 +21,4 @@ data "kubernetes_secret" "argocd_admin_pwd" {
   }
 }
 
-output "argocd_password" {
-  value     = data.kubernetes_secret.argocd_admin_pwd.data["password"]
-  sensitive = true
-}
+
