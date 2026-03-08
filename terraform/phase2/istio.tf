@@ -3,7 +3,7 @@ resource "helm_release" "istio_base" {
   repository = "https://istio-release.storage.googleapis.com/charts"
   chart      = "base"
   namespace  = "istio-system"
-  depends_on = [kubernetes_namespace.ns]
+  depends_on = [kubernetes_manifest.frontend_app]
 }
 
 resource "helm_release" "istiod" {
