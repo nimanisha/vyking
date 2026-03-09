@@ -8,6 +8,11 @@ image:
 imagePullSecrets:
   - name: ghcr-login
 
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+  
 database:
   host: "infrastructure-db-postgresql.db.svc.cluster.local"
   name: "my_database"
@@ -26,7 +31,7 @@ resources:
   limits:
     cpu: 500m
     memory: 512Mi
-    
+
 istio:
   enabled: true
   host: "backend.k3d.localhost"

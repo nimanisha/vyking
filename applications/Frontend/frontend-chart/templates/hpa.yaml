@@ -27,4 +27,4 @@ spec:
         name: {{ include "frontend.fullname" . }}
       target:
         type: Value
-        value: {{ .Values.hpa.targetLatency | default "100ms" | quote }}
+        value: {{ .Values.hpa.targetLatency }}

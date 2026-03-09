@@ -23,7 +23,7 @@ hpa:
   minReplicas: 1
   maxReplicas: 2
   targetCPU: 80
-  targetLatency: "100ms"
+  targetLatency: 100m
 ingress:
   enabled: false
   className: "traefik"
