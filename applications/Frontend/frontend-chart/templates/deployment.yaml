@@ -4,7 +4,6 @@ metadata:
   name: {{ include "frontend.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    sidecar.istio.io/inject: "true"
     {{- include "frontend.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.hpa.enabled }}
@@ -19,6 +18,7 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
       labels:
         {{- include "frontend.selectorLabels" . | nindent 8 }}
+        sidecar.istio.io/inject: "true"
     spec:
       serviceAccountName: {{ include "frontend.serviceAccountName" . }}
       containers:
@@ -44,15 +44,12 @@ spec:
             periodSeconds: 10
           volumeMounts:
             - name: frontend-configs
-              mountPath: /etc/nginx/conf.d/default.conf
+              mountPath: /etc/nginx/conf.d/default.conf 
               subPath: nginx.conf
             - name: frontend-configs
               mountPath: /usr/share/nginx/html/index.html
               subPath: index.html
       volumes:
         - name: frontend-configs
-          configMap:
-            name: {{ include "frontend.fullname" . }}-config
-        - name: html-volume
           configMap:
             name: {{ include "frontend.fullname" . }}-config
