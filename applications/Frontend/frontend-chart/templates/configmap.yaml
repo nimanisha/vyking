@@ -4,5 +4,5 @@ metadata:
   name: {{ include "frontend.fullname" . }}-config
   namespace: {{ .Release.Namespace }}
 data:
-  index.html: {{ tpl (.Files.Get "../index.html") . | indent 4 }}
-  nginx.conf: {{ tpl (.Files.Get "../nginx.conf") . | indent 4 }}
+  index.html: {{ tpl (.Files.Get "../../index.html") . | indent 4 }}
+  nginx.conf: {{ tpl (.Files.Get "../../nginx.conf") . | indent 4 }}
