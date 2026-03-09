@@ -6,11 +6,11 @@ on:
     paths:
       - 'applications/Backend/**' 
       - '.github/workflows/Backend-docker.yml' 
-  pull_request:
-    branches: [ "main" ]
-    paths:
-      - 'applications/Backend/**' 
-      - '.github/workflows/Backend-docker.yml'      
+  # pull_request:
+  #   branches: [ "main" ]
+  #   paths:
+  #     - 'applications/Backend/**' 
+  #     - '.github/workflows/Backend-docker.yml'      
   workflow_dispatch: 
 
 jobs:

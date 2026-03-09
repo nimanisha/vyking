@@ -6,11 +6,11 @@ on:
     paths:
       - 'applications/Frontend/**'
       - '.github/workflows/Frontend-docker.yml'
-  pull_request:
-    branches: [ "main" ]
-    paths:
-      - 'applications/Frontend/**'
-      - '.github/workflows/Frontend-docker.yml'
+  # pull_request:
+  #   branches: [ "main" ]
+  #   paths:
+  #     - 'applications/Frontend/**'
+  #     - '.github/workflows/Frontend-docker.yml'
 jobs:
   security_scans:
     name: Security Analysis
