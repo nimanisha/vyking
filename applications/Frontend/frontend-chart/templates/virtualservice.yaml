@@ -6,9 +6,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   hosts:
-  - {{ .Values.istio.host }}
+  - {{ .Values.istio.host | quote }}
   gateways:
-  - istio-system/main-gateway 
+  - main-gateway 
   http:
   - route:
     - destination:
