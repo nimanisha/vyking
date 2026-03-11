@@ -6,13 +6,14 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   hosts:
-  - {{ .Values.istio.host }}
+  - {{ include "backend.fullname" . }}
+  - {{ include "backend.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
   gateways:
-  - istio-system/main-gateway 
+  - mesh
   http:
   - route:
     - destination:
-        host: {{ include "backend.fullname" . }}
+        host: {{ include "backend.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
         port:
           number: {{ .Values.service.port }}
       weight: 100

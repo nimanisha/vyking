@@ -26,6 +26,7 @@ resource "helm_release" "kiali_server" {
   repository = "https://kiali.org/helm-charts"
   chart      = "kiali-server"
   namespace  = "istio-system"
+  version    = "1.79.0"
 
   set {
     name  = "auth.strategy"
@@ -35,7 +36,11 @@ resource "helm_release" "kiali_server" {
   set {
     name  = "external_services.prometheus.url"
     value = "http://prometheus-server.istio-system.svc.cluster.local"
+    
   }
-
+  set {
+    name  = "deployment.instance_name"
+    value = "kiali"
+  }
   depends_on = [helm_release.prometheus]
 }
