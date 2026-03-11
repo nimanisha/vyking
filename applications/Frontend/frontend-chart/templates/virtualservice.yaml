@@ -8,11 +8,11 @@ spec:
   hosts:
   - {{ .Values.istio.host | quote }}
   gateways:
-  - main-gateway 
+  - default/main-gateway 
   http:
   - route:
     - destination:
-        host: {{ include "frontend.fullname" . }}
+        host: frontend-app-frontend-chart.default.svc.cluster.local
         port:
           number: {{ .Values.service.port }}
     retries:
