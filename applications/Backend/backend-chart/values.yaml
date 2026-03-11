@@ -12,7 +12,7 @@ serviceAccount:
   create: true
   name: ""
   annotations: {}
-  
+
 database:
   host: "infrastructure-db-postgresql.db.svc.cluster.local"
   name: "my_database"
@@ -40,4 +40,4 @@ hpa:
   enabled: true
   minReplicas: 2
   maxReplicas: 4
-  targetLatency: "200ms"  
+  targetLatency: "200m"  
