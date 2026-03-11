@@ -4,7 +4,7 @@ metadata:
   name: {{ include "frontend.fullname" . }}-dr
   namespace: {{ .Release.Namespace }}
 spec:
-  host: {{ include "frontend.fullname" . }}
+  host: frontend-app-frontend-chart.default.svc.cluster.local
   trafficPolicy:
     tls:
       mode: ISTIO_MUTUAL
