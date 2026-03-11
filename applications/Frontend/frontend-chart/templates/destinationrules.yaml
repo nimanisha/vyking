@@ -1,0 +1,10 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: {{ include "frontend.fullname" . }}-dr
+  namespace: {{ .Release.Namespace }}
+spec:
+  host: {{ include "frontend.fullname" . }}
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
