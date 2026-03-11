@@ -12,7 +12,7 @@ spec:
   http:
   - route:
     - destination:
-        host: frontend-app-frontend-chart.default.svc.cluster.local
+        host: {{ include "frontend.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
         port:
           number: {{ .Values.service.port }}
     retries:
