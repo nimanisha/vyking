@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend-service
+  name: {{ include "backend.fullname" . }}
   namespace: {{ .Release.Namespace }}
 spec:
   ports:
