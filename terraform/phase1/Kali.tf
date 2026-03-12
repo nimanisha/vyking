@@ -42,5 +42,9 @@ resource "helm_release" "kiali_server" {
     name  = "deployment.instance_name"
     value = "kiali"
   }
+  set {
+    name  = "external_services.istio.istio_identity_domain"
+    value = "cluster.local"
+  }
   depends_on = [helm_release.prometheus]
 }

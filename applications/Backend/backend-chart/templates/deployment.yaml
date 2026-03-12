@@ -18,6 +18,8 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         sidecar.istio.io/inject: "true"
       labels:
+        app: {{ include "backend.name" . }}
+        version: {{ .Chart.AppVersion | default "latest" }}
         {{- include "backend.selectorLabels" . | nindent 8 }}
     spec:
       serviceAccountName: {{ include "backend.serviceAccountName" . }}
