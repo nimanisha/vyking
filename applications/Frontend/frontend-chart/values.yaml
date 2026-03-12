@@ -38,9 +38,8 @@ resources:
     memory: 128Mi
 
 backend:
-nameOverride: "backend-app-backend-chart"
-namespace: "backend"
-port: 8080
+  namespace: "backend"
+  port: 8080
 
 # image:
 #   pullPolicy: IfNotPresent
