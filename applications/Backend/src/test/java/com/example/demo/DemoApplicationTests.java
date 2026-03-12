@@ -8,6 +8,8 @@ class DemoApplicationTests {
 
 	@Test
 	void contextLoads() {
+		// This test will pass if the application context loads successfully
+		// You can add more specific tests here to verify the functionality of your application
 	}
 
 }
