@@ -58,9 +58,7 @@ Create the name of the service account to use
     {{- default "default" .Values.serviceAccount.name -}}
 {{- end -}}
 {{- end -}}
-{{/*
-backend 
-*/}}
+
 {{- define "frontend.backendUrl" -}}
 {{- $name := .Values.backend.nameOverride  -}}
 {{- $ns := .Values.backend.namespace  -}}
