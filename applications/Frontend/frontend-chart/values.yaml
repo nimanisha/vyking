@@ -17,7 +17,6 @@ serviceAccount:
   create: true
   name: "frontend-service-account"  
 
-backendUrl: "http://backend-service.backend.svc.cluster.local:8080"
 
 hpa:
   minReplicas: 1
@@ -37,6 +36,11 @@ resources:
   limits:
     cpu: 200m
     memory: 128Mi
+
+backend:
+nameOverride: "backend-app-backend-chart"
+namespace: "backend"
+port: 8080
 
 # image:
 #   pullPolicy: IfNotPresent

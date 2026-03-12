@@ -58,3 +58,12 @@ Create the name of the service account to use
     {{- default "default" .Values.serviceAccount.name -}}
 {{- end -}}
 {{- end -}}
+{{/*
+backend 
+*/}}
+{{- define "frontend.backendUrl" -}}
+{{- $name := .Values.backend.nameOverride  -}}
+{{- $ns := .Values.backend.namespace  -}}
+{{- $port := .Values.backend.port -}}
+{{- printf "http://%s.%s.svc.cluster.local:%d" $name $ns (int $port) -}}
+{{- end -}}
