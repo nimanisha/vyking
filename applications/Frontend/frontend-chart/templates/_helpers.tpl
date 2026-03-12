@@ -59,9 +59,11 @@ Create the name of the service account to use
 {{- end -}}
 {{- end -}}
 
+{{/*
+Create the backend service URL
+*/}}
 {{- define "frontend.backendUrl" -}}
-{{- $name := .Values.backend.nameOverride  -}}
-{{- $ns := .Values.backend.namespace  -}}
-{{- $port := .Values.backend.port -}}
-{{- printf "http://%s.%s.svc.cluster.local:%d" $name $ns (int $port) -}}
+{{- $ns := default "backend" .Values.backend.namespace -}}
+{{- $port := default 8080 .Values.backend.port -}}
+{{- printf "http://backend-app-backend-chart.%s.svc.cluster.local:%d" $ns (int $port) -}}
 {{- end -}}
