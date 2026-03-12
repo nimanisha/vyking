@@ -19,7 +19,7 @@ spec:
         sidecar.istio.io/inject: "true"
       labels:
         app: {{ include "backend.name" . | quote }}
-        version: {{ .Chart.AppVersion | default "latest" }}
+        version: {{ .Chart.AppVersion | quote }}
         {{- include "backend.selectorLabels" . | nindent 8 }}
     spec:
       serviceAccountName: {{ include "backend.serviceAccountName" . }}

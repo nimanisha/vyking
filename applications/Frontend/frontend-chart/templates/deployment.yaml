@@ -20,7 +20,7 @@ spec:
         {{- include "frontend.selectorLabels" . | nindent 8 }}
         sidecar.istio.io/inject: "true"
         app: {{ include "frontend.name" . | quote }}
-        version: {{ .Chart.AppVersion | default "latest" }}
+        version: {{ .Chart.AppVersion | default "latest"| quote }}
     spec:
       serviceAccountName: {{ include "frontend.serviceAccountName" . }}
       containers:
