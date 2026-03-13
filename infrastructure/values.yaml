@@ -6,6 +6,9 @@ postgresql:
         secretKeys:
           adminPasswordKey: "postgres-password"
         database: "my_database"
+postgresql:
+  networkPolicy:
+    enabled: false        
   primary:
     persistence:
       size: 8Gi
