@@ -21,7 +21,7 @@ resource "kubernetes_secret" "ghcr-login_backend" {
 }
 
 resource "kubernetes_secret" "my-db-postgresql_backend" {
-    for_each = setsubtract(toset(local.all_namespaces), ["argocd"])
+    for_each = toset(["db", "backend"])
     metadata {
       name = "my-db-postgresql"
       namespace = each.value

@@ -7,7 +7,6 @@ module "phase1" {
   postgres_password = var.postgres_password
   dockerconfigjson = var.dockerconfigjson
   depends_on = [module.phase0]
-  # cluster_name = var.cluster_name
 }
 
 module "phase2" {
