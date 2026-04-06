@@ -15,4 +15,15 @@ spec:
     hosts:
     - "*"
     - {{ .Values.istio.host | quote }} 
+    tls:
+      httpsRedirect: true
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    hosts:
+    - {{ .Values.istio.host | quote }}
+    tls:
+      mode: SIMPLE
+      credentialName: main-gateway-cert
 {{- end }}

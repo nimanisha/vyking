@@ -13,4 +13,3 @@ variable "postgres_password" {
   
 }
 
-
