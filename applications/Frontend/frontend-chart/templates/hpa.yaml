@@ -22,8 +22,8 @@ spec:
       metric:
         name: istio_requests_latency_p95 
       describedObject:
-        apiVersion: networking.istio.io/v1alpha3
-        kind: VirtualService
+        apiVersion: v1
+        kind: Service
         name: {{ include "frontend.fullname" . }}
       target:
         type: Value
