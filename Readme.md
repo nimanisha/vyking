@@ -25,30 +25,16 @@ kubectl version --client
 k3d version
 terraform version
 ```
-Step 1: Create a Local Kubernetes Cluster with k3d
-Create a Kubernetes cluster named mycluster with one server and two agents, and expose HTTP/HTTPS ports via a load balancer.
 
-```bash
 
-k3d cluster create mycluster \
-  --api-port 6550 \
-  -p "80:80@loadbalancer" \
-  -p "443:443@loadbalancer" \
-  --agents 2
-```
-Notes
-The cluster name must be remembered, as it will be required later in Terraform variables.
-
-If you already have multiple clusters, this name helps Terraform select the correct Kubernetes context.
-
-Step 2: Configure Local Domain Resolution
+Step 1: Configure Local Domain Resolution
 Add the frontend domain to your /etc/hosts file so it resolves locally.
 
 
 127.0.0.1 frontend.k3d.localhost
 This allows access to the frontend application via a friendly domain name.
 
-Step 3: Clone the Vyking Repository
+Step 2: Clone the Vyking Repository
 Clone the project repository from GitHub and move into the project directory.
 
 ```bash
@@ -108,9 +94,16 @@ Should be kept secret and not committed to Git.
 
 Step 7: Terraform Plan (Phase 1)
 Run Terraform plan with phase 2 disabled.
+In this step create a Local Kubernetes Cluster with k3d
+Create a Kubernetes cluster named mycluster with one server and two agents, and expose HTTP/HTTPS ports via a load balancer.
 
+
+Notes
+The cluster name must be remembered, as it will be required later in Terraform variables.
+
+If you already have multiple clusters, this name helps Terraform select the correct Kubernetes context.
 ```bash
-terraform plan --var=deploy_phase2=false
+terraform plan --target=module.phase0
 ```
 This step validates:
 
