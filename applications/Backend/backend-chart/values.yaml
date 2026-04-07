@@ -1,4 +1,4 @@
-replicaCount: 2
+replicaCount: 1
 
 image:
   repository: ghcr.io/nimanisha/backend-app 
@@ -38,6 +38,6 @@ istio:
 
 hpa:
   enabled: true
-  minReplicas: 2
-  maxReplicas: 4
-  targetLatency: "200m"  
+  minReplicas: 1
+  maxReplicas: 2
+  targetLatency: "4000m"  
