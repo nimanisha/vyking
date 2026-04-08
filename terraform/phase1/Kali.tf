@@ -3,7 +3,7 @@ resource "helm_release" "victoria_metrics" {
   repository = "https://victoriametrics.github.io/helm-charts/"
   chart      = "victoria-metrics-single"
   namespace  = "istio-system"
-  version    = "0.10.2" 
+  # version    = "0.10.2" 
 
   set {
     name  = "server.retentionPeriod"
@@ -15,7 +15,7 @@ resource "helm_release" "victoria_metrics" {
     value = "false" 
   }
 
-  depends_on = [helm_release.istiod]
+  depends_on = [helm_release.istio_ingressgateway]
 }
 
 resource "helm_release" "kiali_server" {

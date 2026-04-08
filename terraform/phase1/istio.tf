@@ -21,6 +21,7 @@ resource "helm_release" "istio_ingressgateway" {
   chart      = "gateway"
   namespace  = "istio-system"
   version    = "1.20.0"
+  wait       = false
   depends_on = [helm_release.istiod]
 
   set {
