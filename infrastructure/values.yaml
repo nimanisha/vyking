@@ -5,8 +5,8 @@ postgresql:
         existingSecret: "my-db-postgresql"
         secretKeys:
           adminPasswordKey: "postgres-password"
+          userPasswordKey: "postgres-password"
         database: "my_database"
-postgresql:
   networkPolicy:
     enabled: false        
   primary:

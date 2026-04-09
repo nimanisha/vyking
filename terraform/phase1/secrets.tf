@@ -54,7 +54,7 @@ resource "tls_private_key" "example" {
 
 resource "tls_self_signed_cert" "example" {
   private_key_pem = tls_private_key.example.private_key_pem
-
+  dns_names = ["frontend.k3d.localhost", "localhost"]
   subject {
     common_name  = "frontend.k3d.localhost"
     organization = "MyOrg"
@@ -70,9 +70,10 @@ resource "tls_self_signed_cert" "example" {
 }
 
 resource "kubernetes_secret" "istio_tls" {
+  for_each = toset(["istio-system", "default"])
   metadata {
     name      = "main-gateway-cert"
-    namespace = "istio-system"
+    namespace = each.value
   }
 
   type = "kubernetes.io/tls"
