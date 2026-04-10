@@ -119,19 +119,27 @@ Step 8: Terraform Apply (Phase 1)
 If the plan succeeds, apply the configuration:
 
 ```bash
-terraform apply --var=deploy_phase2=false
+terraform apply --var=module.phase1 
 ```
 (Optional, non-interactive):
+In this step terraform will install sequntialy these manifests :
+1- Namespace
+2- Secrets for database , secret for pulling images and make ssl file then creating secret for ssl
+3- Then try to install ArgoCD via helm release
+4- In this step try to install Istio.
+5- In next step install Victoria Metrics db vi Helm release
+6- In this final step try to install prometheus Adapter to read a custom metric - latency 95
 
 ```bash
-terraform apply --var=deploy_phase2=false --auto-approve
+terraform apply --var=deploy_phase2=true --auto-approve
 ```
 What Terraform Does in This Phase
-Creates required Kubernetes namespaces
 
-Creates Kubernetes secrets
 
 Installs Argo CD using a Helm chart
+1- Frontend
+2- Backend
+3- Infrastructure
 
 Step 9: Retrieve Argo CD Initial Admin Password
 After Argo CD is installed, Terraform outputs the initial admin password.
