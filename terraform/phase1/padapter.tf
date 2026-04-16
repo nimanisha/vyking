@@ -7,7 +7,7 @@ resource "helm_release" "prometheus_adapter" {
 
   set {
     name  = "prometheus.url"
-    value = "http://victoria-metrics-victoria-metrics-single.istio-system.svc.cluster.local"
+    value = "http://victoria-metrics-victoria-metrics-single-server.istio-system.svc.cluster.local"
   }
   
   set {
@@ -23,12 +23,13 @@ resource "helm_release" "prometheus_adapter" {
       - seriesQuery: 'istio_request_duration_milliseconds_bucket'
         resources:
           overrides:
-            namespace: {resource: "namespace"}
+            destination_service_namespace: {resource: "namespace"}
             destination_service_name: {resource: "service"}
         name:
           matches: "istio_request_duration_milliseconds_bucket"
           as: "istio_requests_latency_p95"
-        metricsQuery: "histogram_quantile(0.95, sum(rate(<<.Series>>{<<.LabelMatchers>>}[2m])) by (le, <<.GroupBy>>))"
+        # metricsQuery: "histogram_quantile(0.95, sum(rate(<<.Series>>{<<.LabelMatchers>>}[2m])) by (le, <<.GroupBy>>)) or vector(0)"
+        metricsQuery: "(histogram_quantile(0.95, sum(rate(<<.Series>>{<<.LabelMatchers>>}[2m])) by (le, <<.GroupBy>>)) >= 0) or (sum(rate(<<.Series>>{<<.LabelMatchers>>}[2m])) by (<<.GroupBy>>) * 0)"  
     EOF
   ]
 
