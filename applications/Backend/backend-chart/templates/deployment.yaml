@@ -15,6 +15,7 @@ spec:
   template:
     metadata:
       annotations:
+        proxy.istio.io/config: '{ "holdApplicationUntilProxyReceivesConfig": true }'
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         sidecar.istio.io/inject: "true"
       labels:
