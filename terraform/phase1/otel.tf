@@ -40,7 +40,6 @@ resource "helm_release" "otel_collector" {
     mode: deployment
     replicaCount: 1
 
-    # دادن چشم بینا به کلکتور برای پیدا کردن پادهای ایستیو
     clusterRole:
       create: true
       rules:
@@ -65,7 +64,6 @@ resource "helm_release" "otel_collector" {
                 kubernetes_sd_configs:
                   - role: pod
                 relabel_configs:
-                  # پیدا کردن پادهایی که سایدکار ایستیو دارند
                   - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
                     action: keep
                     regex: "true"

@@ -14,9 +14,12 @@ if ! k3d registry list | grep -q ${REG_NAME}; then
 fi
 
 k3d cluster create ${CLUSTER_NAME} \
-  --servers 1 \
-  --agents 2 \
-  --k3s-server-arg '--no-deploy=traefik' \
+
+
+
+k3d cluster create mycluster \                         
+  --api-port 6550 \
+  -p "80:80@loadbalancer" \  -p "443:443@loadbalancer" \
   --registry-use ${REG_NAME}:${REG_PORT}
 
 kubectl config use-context k3d-${CLUSTER_NAME}
