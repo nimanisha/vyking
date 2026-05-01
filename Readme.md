@@ -27,22 +27,28 @@ terraform version
 ```
 
 
-Step 1: Configure Local Domain Resolution
+## Step 1: Configure Local Domain Resolution
 Add the frontend domain to your /etc/hosts file so it resolves locally.
 
 
 127.0.0.1 frontend.k3d.localhost
 This allows access to the frontend application via a friendly domain name.
 
-Step 2: Clone the Vyking Repository
+## Step 2: Clone the Vyking Repository
 Clone the project repository from GitHub and move into the project directory.
 
 ```bash
 git clone https://github.com/nimanisha/vyking.git
 cd vyking
-Step 4: Install Terraform (v1.14.3)
-Install the required Terraform version.
 ```
+## Step 3: Install Terraform (v1.14.3)
+```bash
+brew tap hashicorp/tap
+brew install hashicorp/tap/terraform
+```
+you can browse Terraform website for other OS[Terraform Website](https://developer.hashicorp.com/terraform/install)
+Install the required Terraform version.
+
 
 Example (Linux)
 ```bash
@@ -58,7 +64,7 @@ Expected output includes:Terraform v1.14.3
 
 ```
 
-Step 5: Initialize Terraform
+## Step 4: Initialize Terraform
 Navigate to the Terraform directory and initialize the working directory.
 
 ```bash
@@ -67,50 +73,23 @@ terraform init
 ```
 This downloads required providers and prepares Terraform for execution.
 
-Step 6: Provide Required Terraform Variables
-Terraform will prompt for three on-demand variables:
+## Step 5: Provide Required Terraform Variables
+Terraform will prompt for three on-demand variables you can provide values in command line --var or you can provide in terraform.tfvar or in meantime of execution:
 
-1. Cluster Name
-Value must match the k3d cluster name created earlier.
-
-Example:
-mycluster
-
+1. Cluster Name: The k3d cluster name we will create (e.g., mycluster). Used to set the correct Kubernetes context.
 Used by Terraform to select the correct Kubernetes context.
 
-2. GitHub Token
-A GitHub Personal Access Token (PAT).
+2. GitHub Token: A GitHub Personal Access Token (PAT) with permissions to pull images from your private GitHub Packages (GHCR).
 
-Must have permission to pull images from GitHub Packages (private container registry).
+3. Database Password or postgres_password: Arbitrary password for the PostgreSQL database. Keep this secure.
 
-Required for backend and frontend image pulls.
+4. deploy_phase2: Boolean (true/false) to control the deployment of ArgoCD applications or you can use --target=phase0, 1, 2 in each phases
 
-3. Database Password
-Arbitrary password of your choice.
 
-Used to configure the PostgreSQL database.
 
-Should be kept secret and not committed to Git.
+## Step 6: Create the Cluster (Phase 0)
 
-## Prerequisites:
-
-Variable values
-
-Terraform resources : use should provide variables into tfvars files we need these variables :
-
-variable "deploy_phase2" 
-description= if you 're supposed to use false and true in deploy you can use this variable or you can ignore it.
-
-variable "dockerconfigjson" 
-description = "GitHub token for my account because I provided images under my private repo for realstic.
-
-  
-variable "postgres_password" 
-description = "DB Password"
-  
-
-variable "cluster_name" 
-description = this is k3d cluster name we use to use config file in provider
+Create a local Kubernetes cluster named mycluster with one server and two agents, exposing HTTP/HTTPS ports via a load balancer.
 
 
 Step 7: Terraform Plan (Phase 1)
@@ -121,31 +100,24 @@ In this step create a Local Kubernetes Cluster with k3d
 
 Create a Kubernetes cluster named mycluster with one server and two agents, and expose HTTP/HTTPS ports via a load balancer.
 
-
+```bash
+terraform apply -target=module.phase0
+```
 #### Notes
 The cluster name must be remembered, as it will be required later in Terraform variables.
 
 If you already have multiple clusters, this name helps Terraform select the correct Kubernetes context.
-```bash
-terraform plan --target=module.phase0
-```
-This step validates:
 
-Kubernetes connectivity
-
-
-Step 8: Terraform Apply (Phase 1)
-If the plan succeeds, apply the configuration: 
-
-```bash
-terraform apply --var=module.phase0
-```
 (Optional, non-interactive):
 In this step terraform will install sequntialy k3d application and will create 2 worker and 1 master node.
 
-
+## Step 7: Deploy Core Infrastructure (Phase 1)
 ```bash
-terraform apply --var=module.phase1
+terraform apply --target=module.phase1
+```
+OR
+```bash
+terraform apply --var=mdeploy_phase2=flase
 ```
 (Optional, non-interactive):
 In this step terraform will install sequntialy these manifests :
@@ -166,8 +138,14 @@ In this step terraform will install sequntialy these manifests :
 
 8- Kiali install and configured to connect to VM database to grab the mtls configurations.
 
+
+## Step 8: Deploy Applications via GitOps (Phase 2)
 ```bash
 terraform apply --var=deploy_phase2=true --auto-approve
+```
+OR
+```bash
+terraform apply --target=module.phase2
 ```
 What Terraform Does in This Phase
 
@@ -177,7 +155,7 @@ Installs Argo CD using a Helm chart
 ### 2- Backend
 ### 3- Infrastructure
 
-Step 9: Retrieve Argo CD Initial Admin Password
+## Step 9: Retrieve Argo CD Initial Admin Password
 After Argo CD is installed, Terraform outputs the initial admin password.
 
 Retrieve it with:
@@ -193,31 +171,29 @@ Password: output from the command above
 
 This password is required to log in to the Argo CD web interface.
 
-Step 10: Argo CD Applications Deployment
-Terraform installs Argo CD Applications as Kubernetes resources.
-Three applications are managed by Argo CD:
+## Step 10: Argo CD Applications Deployment
+With the applications synced and the /etc/hosts file updated, open your browser and navigate to:
 
-## 1. Frontend Application
-Deployed using a Helm chart
+http://frontend.k3d.localhost:8443
 
-Supports continuous deployment
-
-Uses versioned Helm releases
-
-Exposed via the load balancer and mapped domain:
+You should see the Vyking frontend application successfully loaded, confirming the traffic routing through the Istio Ingress Gateway.
 
 
-frontend.k3d.localhost
-## 2. Backend Application
-Deployed using a Helm chart
+## Step 11: Verify Database Backup CronJob
+To ensure the postgres-backup CronJob is working and creating backup files on its Persistent Volume, you can trigger it manually and inspect the pod.
 
-Version-controlled deployments
+```bash
+kubectl create job --from=cronjob/postgres-backup manual-backup-1 -n db
+```
+Exec into the database pod to verify the backup file was created in the shared backup volume (assuming the mount path is /backups):
+```bash
+kubectl exec -it <postgres-pod-name> -n db -- /bin/sh
+ls -lh /backups
+exit
+```
 
-Pulls container images from GitHub Packages
-
-Uses Kubernetes secrets for database credentials
-
-## 3. Infrastructure Application
+You should see a .sql or compressed backup archive listed in the directory.
+### Infrastructure Application
 Deployed using GitHub sync (not Helm)
 
 Responsible for shared and stateful components:

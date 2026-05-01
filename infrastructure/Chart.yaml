@@ -9,3 +9,12 @@ dependencies:
   - name: postgresql
     version: 18.2.0
     repository: https://charts.bitnami.com/bitnami  
+  # 1. Prometheus Adapter
+  - name: prometheus-adapter
+    version: "4.11.0"
+    repository: "https://prometheus-community.github.io/helm-charts"
+
+  # 2. OpenTelemetry Collector
+  - name: opentelemetry-collector
+    version: "0.110.0"
+    repository: "https://open-telemetry.github.io/opentelemetry-helm-charts"  
