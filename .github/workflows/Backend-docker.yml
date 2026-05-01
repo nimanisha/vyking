@@ -110,3 +110,19 @@ jobs:
           CHART_VER="1.0.${{ github.run_number }}"
           helm package applications/Backend/backend-chart --version $CHART_VER
           helm push backend-chart-*.tgz oci://ghcr.io/$(echo ${{ github.repository_owner }} | tr '[A-Z]' '[a-z]')/charts
+      - name: Update Backend Version in Umbrella Chart and Push to Git
+        run: |
+          BASE_VERSION=$(grep '^version:' applications/Backend/backend-chart/Chart.yaml | awk '{print $2}' | tr -d '"' | tr -d "'")
+          NEW_VERSION="${BASE_VERSION}-${{ github.run_number }}"
+          
+          echo "Updating backend-chart dependency to version $NEW_VERSION in Umbrella Chart"
+
+          yq -i '(.dependencies[] | select(.name == "backend-chart")).version = "'$NEW_VERSION'"' applications/Chart.yaml
+
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add applications/Chart.yaml
+          git commit -m "chore: bump backend-chart to $NEW_VERSION in Umbrella Chart [skip ci]"
+          
+          git push origin HEAD:main    
