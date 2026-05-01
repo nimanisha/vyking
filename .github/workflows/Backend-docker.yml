@@ -128,5 +128,5 @@ jobs:
 
           git add applications/Chart.yaml
           git commit -m "chore: bump backend-chart to $NEW_VERSION in Umbrella Chart [skip ci]"
-          
+          git pull --rebase origin main
           git push origin HEAD:main
