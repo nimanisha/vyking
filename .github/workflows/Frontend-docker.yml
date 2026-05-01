@@ -104,10 +104,11 @@ jobs:
       - name: Package and Push OCI
         run: |
           BASE_VERSION=$(grep '^version:' applications/Frontend/frontend-chart/Chart.yaml | awk '{print $2}' | tr -d '"' | tr -d "'")       
-          NEW_VERSION="${BASE_VERSION}.${{ github.run_number }}"
+          NEW_VERSION="${BASE_VERSION}-${{ github.run_number }}"
           LOWER_OWNER=$(echo "${{ github.repository_owner }}" | tr '[A-Z]' '[a-z]')
           helm package applications/Frontend/frontend-chart --version $NEW_VERSION
           helm push frontend-chart-$NEW_VERSION.tgz oci://ghcr.io/$LOWER_OWNER/charts
+
       - name: Update frontend Version in Umbrella Chart and Push to Git
         run: |
           BASE_VERSION=$(grep '^version:' applications/Frontend/frontend-chart/Chart.yaml | awk '{print $2}' | tr -d '"' | tr -d "'")
@@ -123,4 +124,4 @@ jobs:
           git add applications/Chart.yaml
           git commit -m "chore: bump frontend-chart to $NEW_VERSION in Umbrella Chart [skip ci]"
           
-          git push origin HEAD:main    
+          git push origin HEAD:main
