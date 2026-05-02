@@ -15,7 +15,7 @@ resource "helm_release" "victoria_metrics" {
     value = "false" 
   }
 
-  depends_on = [helm_release.otel_collector]
+  depends_on = [helm_release.istio_ingressgateway]
 }
 
 resource "helm_release" "kiali_server" {
