@@ -18,6 +18,7 @@ backupJob:
 # Prometheus Adapter Configuration
 # ==========================================
 prometheus-adapter:
+  namespaceOverride: "istio-system"
   prometheus:
     url: "http://victoria-metrics-victoria-metrics-single-server.istio-system.svc.cluster.local"
     port: 8428
@@ -38,6 +39,7 @@ prometheus-adapter:
 # OpenTelemetry Collector Configuration
 # ==========================================
 opentelemetry-collector:
+  namespaceOverride: "istio-system"
   mode: deployment
   replicaCount: 1
 
