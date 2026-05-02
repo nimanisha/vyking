@@ -14,3 +14,89 @@ postgresql:
       size: 8Gi
 backupJob:
   schedule: "0 0 1 * *"
+# ==========================================
+# Prometheus Adapter Configuration
+# ==========================================
+prometheus-adapter:
+  prometheus:
+    url: "http://victoria-metrics-victoria-metrics-single-server.istio-system.svc.cluster.local"
+    port: 8428
+  rules:
+    default: false
+    custom:
+      - seriesQuery: 'istio_request_duration_milliseconds_bucket'
+        resources:
+          overrides:
+            destination_service_namespace: {resource: "namespace"}
+            destination_service_name: {resource: "service"}
+        name:
+          matches: "istio_request_duration_milliseconds_bucket"
+          as: "istio_requests_latency_p95"
+        metricsQuery: "(histogram_quantile(0.95, sum(rate(<<.Series>>{<<.LabelMatchers>>}[2m])) by (le, <<.GroupBy>>)) >= 0) or (sum(rate(<<.Series>>{<<.LabelMatchers>>}[2m])) by (<<.GroupBy>>) * 0)"
+
+# ==========================================
+# OpenTelemetry Collector Configuration
+# ==========================================
+opentelemetry-collector:
+  mode: deployment
+  replicaCount: 1
+
+  clusterRole:
+    create: true
+    rules:
+      - apiGroups: [""]
+        resources: ["pods", "namespaces", "endpoints", "services", "nodes"]
+        verbs: ["get", "watch", "list"]
+  
+  image:
+    repository: "otel/opentelemetry-collector-contrib"
+    tag: "0.110.0"
+
+  config:
+    extensions:
+      health_check:
+        endpoint: 0.0.0.0:13133
+
+    receivers:
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: 'istio-mesh'
+              kubernetes_sd_configs:
+                - role: pod
+              relabel_configs:
+                - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+                  action: keep
+                  regex: "true"
+                - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+                  action: replace
+                  target_label: __metrics_path__
+                  regex: (.+)
+                - source_labels: [__meta_kubernetes_pod_ip, __meta_kubernetes_pod_annotation_prometheus_io_port]
+                  action: replace
+                  regex: ([^:]+)(?::\d+)?;(\d+)
+                  replacement: $1:$2
+                  target_label: __address__
+                - source_labels: [__meta_kubernetes_namespace]
+                  action: replace
+                  target_label: namespace
+                - source_labels: [__meta_kubernetes_pod_name]
+                  action: replace
+                  target_label: pod
+
+    processors:
+      batch: {}
+
+    exporters:
+      debug:
+        verbosity: detailed
+      prometheusremotewrite:
+        endpoint: "http://victoria-metrics-victoria-metrics-single-server.istio-system.svc.cluster.local:8428/api/v1/write"
+
+    service:
+      extensions: [health_check]
+      pipelines:
+        metrics:
+          receivers: [prometheus] 
+          processors: [batch]
+          exporters: [prometheusremotewrite, debug]  
