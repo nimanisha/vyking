@@ -19,6 +19,7 @@ data "kubernetes_secret" "argocd_admin_pwd" {
     name      = "argocd-initial-admin-secret"
     namespace = "argocd"
   }
+  depends_on = [time_sleep.wait_for_argocd]
 }
 
 
