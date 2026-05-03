@@ -12,7 +12,12 @@ Make sure the following tools are installed on your machine:
 
 - Docker
 - kubectl
-- k3d
+- k3d  If you don't have **k3d** installed, you can install it using the following commands:
+
+  **For macOS (using Homebrew):**
+  ```bash
+  brew install k3d
+  ```
 - Terraform **v1.14.3**
 - Helm (used internally by Terraform)
 - Git
