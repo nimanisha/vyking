@@ -91,11 +91,6 @@ Used by Terraform to select the correct Kubernetes context.
 
 Create a local Kubernetes cluster named mycluster with one server and two agents, exposing HTTP/HTTPS ports via a load balancer.
 
-
-Step 7: Terraform Plan (Phase 1)
-
-Run Terraform plan with phase 2 disabled.
-
 In this step create a Local Kubernetes Cluster with k3d
 
 Create a Kubernetes cluster named mycluster with one server and two agents, and expose HTTP/HTTPS ports via a load balancer.
@@ -145,7 +140,7 @@ terraform apply --var=deploy_phase2=true --auto-approve
 ```
 OR
 ```bash
-terraform apply --target=module.phase2
+terraform apply --target=module.phase2 --var=deploy_phase2=true
 ```
 What Terraform Does in This Phase
 
@@ -222,18 +217,52 @@ Secrets are provided dynamically and should never be committed to Git
 
 
 
-Cleanup (Optional)
+<!-- Cleanup (Optional)
 To remove all resources:
 
 ```bash
 terraform destroy --auto-approve
-Delete the k3d cluster:
-
 ```
+or do it phase base:
+For revoking phase 2 only:
+
 ```bash
-k3d cluster delete mycluster
+terraform destroy --target=module.phase2 --var=deploy_phase2=true
 ```
+Revoking only phase 1:
 
+```bash
+terraform destroy --target=module.phase1
+```
+In most commonn it couldn't revoke namespace so you can proceed
+Revoking phase 0 
+```bash
+terraform destroy --target=module.phase0 -->
+<!-- ``` -->
+# Core Architectural Components
+## 1. Istio Service Mesh & mTLS
+Istio acts as our network backbone. By passing traffic through Istio's Envoy sidecar proxies, we automatically enforce mTLS (Mutual TLS) across the cluster.
+
+Zero-Trust Security: Every pod-to-pod communication (e.g., Frontend to Backend, Backend to Database) is cryptographically authenticated and encrypted.
+
+No Code Changes: This security layer is achieved transparently without altering any application code.
+
+## 2. OpenTelemetry (OTel) Metrics Pipeline
+Instead of relying on traditional scraping architectures, we use OpenTelemetry as our central telemetry pipeline.
+
+Collection: The OTel Collector actively scrapes raw Prometheus-style metrics directly from Istio's Envoy proxies.
+
+Processing: It processes these metrics, dynamically attaching crucial metadata (like namespace, pod name, and IP addresses) using relabel_configs.
+
+Exporting: Finally, it performs a remote_write to push all processed telemetry data into VictoriaMetrics. This standardizes metric collection and cleanly decouples data scraping from data storage.
+## 3. Kiali (Mesh Observability)
+Kiali provides a powerful, visual observability console for the Istio Service Mesh.
+
+Visualizing Traffic: It automatically maps the network topology, showing exactly how microservices communicate in real-time.
+
+mTLS Validation: It provides visual confirmation of mTLS enforcement (displaying lock icons on traffic edges).
+
+Health & Tracing: It highlights traffic bottlenecks, HTTP error rates, and validates Istio configurations (like VirtualServices and Gateways) to ensure healthy routing.
 # Data Flow:
 ## How Prometheus Adapter Translates Custom Metrics for HPA:
 
