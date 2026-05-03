@@ -175,6 +175,11 @@ Retrieve it with:
 terraform output argocd_initial_password
 ```
 Use:
+```bash
+kubectl port-forward svc/argocd-server 8085:80 -n argocd  
+```
+Then in your browser type:
+https://localhost:8085
 
 Username: admin
 
@@ -191,17 +196,51 @@ You should see the Vyking frontend application successfully loaded, confirming t
 
 
 ## Step 11: Verify Database Backup CronJob
+Run a temporary inspector pod to verify the backup file was created in the shared backup volume:
+```bash
+kubectl run -i --tty --rm debug-pvc --image=alpine --restart=Never -n db --overrides='
+{
+  "spec": {
+    "volumes": [
+      {
+        "name": "backup-vol",
+        "persistentVolumeClaim": {
+          "claimName": "postgres-backup-pvc"
+        }
+      }
+    ],
+    "containers": [
+      {
+        "name": "debugger",
+        "image": "alpine",
+        "command": ["/bin/sh"],
+        "stdin": true,
+        "tty": true,
+        "volumeMounts": [
+          {
+            "name": "backup-vol",
+            "mountPath": "/backup"
+          }
+        ]
+      }
+    ]
+  }
+}'
+```
+Once inside the interactive shell of the inspector pod, list the contents of the directory and exit:
+Then 
+```bash
+ls -lh /backup
+```
+You should see your generated .sql database backup archive listed in the directory. Upon exiting, the temporary inspector pod will be automatically deleted.
+OR 
 To ensure the postgres-backup CronJob is working and creating backup files on its Persistent Volume, you can trigger it manually and inspect the pod.
 
 ```bash
 kubectl create job --from=cronjob/postgres-backup manual-backup-1 -n db
 ```
-Exec into the database pod to verify the backup file was created in the shared backup volume (assuming the mount path is /backups):
-```bash
-kubectl exec -it <postgres-pod-name> -n db -- /bin/sh
-ls -lh /backups
-exit
-```
+
+
 
 You should see a .sql or compressed backup archive listed in the directory.
 ### Infrastructure Application
