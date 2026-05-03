@@ -101,7 +101,12 @@ In this step create a Local Kubernetes Cluster with k3d
 Create a Kubernetes cluster named mycluster with one server and two agents, and expose HTTP/HTTPS ports via a load balancer.
 
 ```bash
-terraform apply -target=module.phase0
+terraform plan -target=module.phase0
+```
+**NOTE** You can observe which resource willbe added into infrastructure before apply in next steps I wouldn't mention it but Plan shows us what will be changed in our infra.
+
+```bash
+terraform apply -target=module.phase0 --auto-approve
 ```
 #### Notes
 The cluster name must be remembered, as it will be required later in Terraform variables.
