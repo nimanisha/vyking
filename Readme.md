@@ -145,10 +145,16 @@ terraform apply --target=module.phase2 --var=deploy_phase2=true
 What Terraform Does in This Phase
 
 
-Installs Argo CD using a Helm chart
-### 1- Frontend
-### 2- Backend
-### 3- Infrastructure
+### What Happens in This Phase?
+Argo CD continuously monitors the GitHub repository and deploys the following application stacks using Helm (and Umbrella charts):
+
+Frontend & Backend Applications: Deployed using declarative Argo CD manifests pointing to their respective Helm charts in the repository. They are configured to automatically sync whenever a new commit is pushed.
+
+Secure Database Connectivity: The Backend microservice is dynamically configured to connect to the PostgreSQL database using Kubernetes internal DNS (infrastructure-db-postgresql.db.svc.cluster.local), ensuring no database traffic leaves the cluster.
+
+Zero-Trust Network Policies: Strict Kubernetes NetworkPolicies are applied to the db namespace. This ensures a "Default Deny" posture where only the Backend pods are explicitly whitelisted to communicate with the PostgreSQL database. All other internal or external traffic is blocked at the network level.
+
+Infrastructure Layer: An Umbrella Helm chart that encapsulates our stateful components (PostgreSQL), CronJobs for backups, and telemetry add-ons (OTel and Prometheus Adapter).
 
 ## Step 9: Retrieve Argo CD Initial Admin Password
 After Argo CD is installed, Terraform outputs the initial admin password.
