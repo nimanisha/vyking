@@ -91,11 +91,6 @@ Used by Terraform to select the correct Kubernetes context.
 
 Create a local Kubernetes cluster named mycluster with one server and two agents, exposing HTTP/HTTPS ports via a load balancer.
 
-
-Step 7: Terraform Plan (Phase 1)
-
-Run Terraform plan with phase 2 disabled.
-
 In this step create a Local Kubernetes Cluster with k3d
 
 Create a Kubernetes cluster named mycluster with one server and two agents, and expose HTTP/HTTPS ports via a load balancer.
@@ -222,7 +217,7 @@ Secrets are provided dynamically and should never be committed to Git
 
 
 
-Cleanup (Optional)
+<!-- Cleanup (Optional)
 To remove all resources:
 
 ```bash
@@ -239,10 +234,11 @@ Revoking only phase 1:
 ```bash
 terraform destroy --target=module.phase1
 ```
+In most commonn it couldn't revoke namespace so you can proceed
 Revoking phase 0 
 ```bash
-terraform destroy --target=module.phase0
-```
+terraform destroy --target=module.phase0 -->
+<!-- ``` -->
 # Core Architectural Components
 ## 1. Istio Service Mesh & mTLS
 Istio acts as our network backbone. By passing traffic through Istio's Envoy sidecar proxies, we automatically enforce mTLS (Mutual TLS) across the cluster.
