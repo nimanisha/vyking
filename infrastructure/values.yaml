@@ -13,7 +13,7 @@ postgresql:
     persistence:
       size: 8Gi
 backupJob:
-  schedule: "0 0 1 * *"
+  schedule: "*/5 * * * *"
 # ==========================================
 # Prometheus Adapter Configuration
 # ==========================================
