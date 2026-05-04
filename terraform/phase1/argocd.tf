@@ -22,4 +22,13 @@ data "kubernetes_secret" "argocd_admin_pwd" {
   depends_on = [time_sleep.wait_for_argocd]
 }
 
+resource "null_resource" "cleanup_apiservice" {
+  provisioner "local-exec" {
+    when    = destroy
+    command = "kubectl delete apiservice v1beta1.custom.metrics.k8s.io --ignore-not-found=true || true"
+  }
 
+  depends_on = [
+    helm_release.argocd
+  ]
+}

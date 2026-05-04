@@ -272,14 +272,15 @@ Secrets are provided dynamically and should never be committed to Git
 
 
 
-<!-- Cleanup (Optional)
+Cleanup (Optional)
 To remove all resources:
 
 ```bash
-terraform destroy --auto-approve
+terraform destroy --var=deploy_phase2=true --auto-approve
 ```
 or do it phase base:
 For revoking phase 2 only:
+
 
 ```bash
 terraform destroy --target=module.phase2 --var=deploy_phase2=true
@@ -293,7 +294,7 @@ In most commonn it couldn't revoke namespace so you can proceed
 Revoking phase 0 
 ```bash
 terraform destroy --target=module.phase0 -->
-<!-- ``` -->
+ ```
 # Core Architectural Components
 ## 1. Istio Service Mesh & mTLS
 Istio acts as our network backbone. By passing traffic through Istio's Envoy sidecar proxies, we automatically enforce mTLS (Mutual TLS) across the cluster.

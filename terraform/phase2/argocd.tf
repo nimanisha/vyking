@@ -1,28 +1,18 @@
-resource "kubernetes_manifest" "infrastructure_db" {
+# 1. Infrastructure Application
+resource "kubernetes_manifest" "infrastructure_app" {
   manifest = {
     apiVersion = "argoproj.io/v1alpha1"
     kind       = "Application"
     metadata = {
-      name      = "infrastructure-db"
+      name      = "infrastructure-app"
       namespace = "argocd"
     }
     spec = {
       project = "default"
-      ignoreDifferences = [
-        {
-          group = ""
-          kind  = "PersistentVolumeClaim"
-          name  = "postgres-backup-pvc"
-          jsonPointers = [
-            "/spec/volumeName",
-            "/metadata/annotations/pv.kubernetes.io~1bind-completed"
-          ]
-        }
-      ]
       source = {
         repoURL        = "https://github.com/nimanisha/vyking.git"
         targetRevision = "main"
-        path            = "infrastructure"
+        path           = "infrastructure"
         helm = {
           valueFiles = ["values.yaml"]
         }
@@ -36,66 +26,28 @@ resource "kubernetes_manifest" "infrastructure_db" {
           prune    = true
           selfHeal = true
         }
-        syncOptions = ["CreateNamespace=false"]
+        syncOptions = ["CreateNamespace=false"] 
       }
     }
   }
-  # depends_on = [null_resource.register_ghcr_repo, kubernetes_secret.ghcr_repo_config]
 }
 
-# 2. Backend Application
-resource "kubernetes_manifest" "backend_app" {
+resource "kubernetes_manifest" "applications_app" {
   manifest = {
     apiVersion = "argoproj.io/v1alpha1"
     kind       = "Application"
     metadata = {
-      name      = "backend-app"
+      name      = "applications-app"
       namespace = "argocd"
     }
     spec = {
       project = "default"
       source = {
-        repoURL        = "ghcr.io/nimanisha"
-        chart          = "charts/backend-chart"
-        targetRevision = "1.0.*"
-        helm = {
-          valueFiles = ["values.yaml"]
-        }
-      }
-      destination = {
-        server    = "https://kubernetes.default.svc"
-        namespace = "backend"
-      }
-      syncPolicy = {
-        automated = {
-          prune    = true
-          selfHeal = true
-        }
-        syncOptions = ["CreateNamespace=false"]
-      }
-    }
-  }
-  depends_on = [kubernetes_manifest.infrastructure_db]
-}
-
-# 3. Frontend Application
-resource "kubernetes_manifest" "frontend_app" {
-  manifest = {
-    apiVersion = "argoproj.io/v1alpha1"
-    kind       = "Application"
-    metadata = {
-      name      = "frontend-app"
-      namespace = "argocd"
-    }
-    spec = {
-      project = "default"
-      source = {
-        repoURL        = "ghcr.io/nimanisha"
-        chart          = "charts/frontend-chart"
-        targetRevision = "1.0.*"
-        helm = {
-          valueFiles = ["values.yaml"]
-        }
+        repoURL        = "https://github.com/nimanisha/vyking.git"
+        targetRevision = "main"
+        path           = "applications"
+        # helm = {
+        # }
       }
       destination = {
         server    = "https://kubernetes.default.svc"
@@ -106,9 +58,9 @@ resource "kubernetes_manifest" "frontend_app" {
           prune    = true
           selfHeal = true
         }
-        syncOptions = ["CreateNamespace=false"]
       }
     }
   }
-  depends_on = [kubernetes_manifest.backend_app]
+  
+  depends_on = [kubernetes_manifest.infrastructure_app]
 }
