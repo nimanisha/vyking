@@ -2,7 +2,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "backend.fullname" . }}-hpa
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.namespaceOverride | default .Release.Namespace }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
