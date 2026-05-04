@@ -1,3 +1,4 @@
+namespaceOverride: "backend"
 replicaCount: 1
 
 image:

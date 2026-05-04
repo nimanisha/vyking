@@ -9,5 +9,5 @@ dependencies:
     version: "0.1.0-97"
     repository: "file://./Backend/backend-chart"
   - name: frontend-chart
-    version: "1.0"
+    version: "1.0.0-141"
     repository: "file://./Frontend/frontend-chart"
