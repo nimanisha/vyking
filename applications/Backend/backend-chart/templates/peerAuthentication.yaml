@@ -2,7 +2,7 @@ apiVersion: security.istio.io/v1beta1
 kind: PeerAuthentication
 metadata:
   name: {{ include "backend.fullname" . }}-mtls
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.namespaceOverride | default .Release.Namespace }}
 spec:
   mtls:
     mode: STRICT 

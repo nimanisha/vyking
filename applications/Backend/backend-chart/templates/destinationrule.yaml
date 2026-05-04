@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
   name: {{ include "backend.fullname" . }}-dr
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.namespaceOverride | default .Release.Namespace }}
 spec:
   host: {{ include "backend.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
   trafficPolicy:
