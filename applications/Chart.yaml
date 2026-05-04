@@ -7,7 +7,7 @@ appVersion: "1.0"
 dependencies:
   - name: backend-chart
     version: "0.1.0-100"
-    repository: "file://./Backend/backend-chart"
+    repository: "oci://ghcr.io/nimanisha"
   - name: frontend-chart
     version: "1.0.0-141"
-    repository: "file://./Frontend/frontend-chart"
+    repository: "oci://ghcr.io/nimanisha"
